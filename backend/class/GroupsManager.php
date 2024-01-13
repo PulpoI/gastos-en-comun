@@ -90,7 +90,6 @@ class GroupsManager
     }
   }
 
-
   public function verifyGroupPassword($groupId, $enteredPassword)
   {
     try {
@@ -116,6 +115,21 @@ class GroupsManager
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
       return ['error' => 'Failed to verify group password', 'status' => 500];
+    }
+  }
+
+  public function getGroupUsers($groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT Users.id_user, Users.name, Users.email FROM Users INNER JOIN UserGroups ON Users.id_user = UserGroups.user_id WHERE UserGroups.group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      return ['users' => $users, 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to get group users', 'status' => 500];
     }
   }
 

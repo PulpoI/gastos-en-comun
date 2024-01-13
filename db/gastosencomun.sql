@@ -8,7 +8,8 @@ CREATE TABLE Users (
 CREATE TABLE Groups (
     id_group INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    is_public BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE UserGroups (
@@ -24,9 +25,9 @@ CREATE TABLE CommonExpenses (
     description VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_user INT,
-    id_group INT,
-    FOREIGN KEY (id_user) REFERENCES Users(id_user),
-    FOREIGN KEY (id_group) REFERENCES Groups(id_group)
+    user_id INT,
+    group_id INT,
+    FOREIGN KEY (user_id) REFERENCES Users(id_user),
+    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
 );
 

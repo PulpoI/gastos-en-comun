@@ -1,6 +1,6 @@
 <?php
 
-require_once '../class/ExpensesManager.php';
+require_once 'class/ExpensesManager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $groupId = $_GET['groupId'];
@@ -12,6 +12,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 } else {
   echo json_encode(['error' => 'Invalid request method']);
 }
-
 
 ?>
