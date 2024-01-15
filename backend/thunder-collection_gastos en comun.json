@@ -1,0 +1,331 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "gastos en comun",
+    "dateExported": "2024-01-15T22:43:37.431Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "e4772f81-ddb0-416f-8f94-2e233dea39af",
+            "name": "user",
+            "containerId": "",
+            "created": "2024-01-11T17:19:57.193Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "groups",
+            "containerId": "",
+            "created": "2024-01-11T20:52:08.403Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "d63d4b46-fa17-4d66-9c10-4b0b51e275af",
+            "name": "expenses",
+            "containerId": "",
+            "created": "2024-01-13T14:13:53.726Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "17a15d2a-36ca-424c-b6be-468b3d9b3c49",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "e4772f81-ddb0-416f-8f94-2e233dea39af",
+            "name": "post user",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=register_user",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-01-11T17:20:03.640Z",
+            "modified": "2024-01-14T00:43:31.842Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "register_user",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\" : \"user 3\",\n  \"email\" : \"3@gmail.com\",\n  \"password\": \"123\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "213dbf53-78d6-4af2-ad67-5e4bc695cf6b",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "e4772f81-ddb0-416f-8f94-2e233dea39af",
+            "name": "get user",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=get_user_by_email&email=1@gmail.com",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-01-11T20:01:22.230Z",
+            "modified": "2024-01-11T21:01:16.996Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "get_user_by_email",
+                    "isPath": false
+                },
+                {
+                    "name": "email",
+                    "value": "1@gmail.com",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "62d60d99-9105-4e00-bb91-807b437dae95",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "post group",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=create_group",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2024-01-11T20:52:19.606Z",
+            "modified": "2024-01-13T19:56:01.254Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "create_group",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Gastos de alquileres\",\n  \"password\": \"123\",\n  \"userId\" : \"2\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e15d2e09-0b4a-43e0-a955-08eb4014fcfe",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "post add user to group",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=add_user_to_group",
+            "method": "POST",
+            "sortNum": 70000,
+            "created": "2024-01-12T02:46:28.518Z",
+            "modified": "2024-01-14T06:12:04.829Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "add_user_to_group",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"adminUserId\": \"2\",\n  \"groupId\": \"2\",\n  \"userEmail\": \"3@gmail.com\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "80c341ce-b144-49b2-92e8-b3a304921571",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "verify group password",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=verify_group_password",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2024-01-12T15:28:27.127Z",
+            "modified": "2024-01-13T14:03:18.814Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "verify_group_password",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"groupId\": \"14\",\n  \"enteredPassword\": \"123\"\n}\n",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "7da03087-9b35-4f64-ac51-f3065c76367e",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "d63d4b46-fa17-4d66-9c10-4b0b51e275af",
+            "name": "post expense",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=add_common_expense",
+            "method": "POST",
+            "sortNum": 90000,
+            "created": "2024-01-13T14:14:06.200Z",
+            "modified": "2024-01-14T06:12:53.403Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "add_common_expense",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"description\": \"Asado\",\n  \"amount\": \"7000\",\n  \"userId\": \"3\",\n  \"groupId\": \"2\",\n  \"unregisteredUserId\": null\n}\n",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "d7e1929b-6de0-4855-9cd8-3cefdc5f1355",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "d63d4b46-fa17-4d66-9c10-4b0b51e275af",
+            "name": "update expense",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=update_common_expense",
+            "method": "PUT",
+            "sortNum": 100000,
+            "created": "2024-01-13T14:32:38.902Z",
+            "modified": "2024-01-14T00:44:25.661Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "update_common_expense",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"expenseId\": \"4\",\n  \"description\": \"Fers2ds3\",\n  \"amount\": \"3423\",\n  \"userId\": \"3\",\n  \"groupId\": \"1\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "313dbe7a-76ac-44ca-9a6e-93f6a484e4b6",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "d63d4b46-fa17-4d66-9c10-4b0b51e275af",
+            "name": "delete expense",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=delete_common_expense",
+            "method": "DELETE",
+            "sortNum": 110000,
+            "created": "2024-01-13T14:53:10.957Z",
+            "modified": "2024-01-14T00:44:53.592Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "delete_common_expense",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"expenseId\": \"1\",\n  \"userId\": \"3\",\n  \"groupId\": \"1\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e74a0426-fd9d-4532-aa8b-8a90948a9b45",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "d63d4b46-fa17-4d66-9c10-4b0b51e275af",
+            "name": "get group expenses",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=get_group_expenses&groupId=3",
+            "method": "GET",
+            "sortNum": 120000,
+            "created": "2024-01-13T15:04:24.212Z",
+            "modified": "2024-01-14T00:45:37.333Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "get_group_expenses",
+                    "isPath": false
+                },
+                {
+                    "name": "groupId",
+                    "value": "3",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "9856aa73-ee1e-4784-bed5-7ffbe3780004",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "get group users",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=get_group_users&groupId=1",
+            "method": "GET",
+            "sortNum": 130000,
+            "created": "2024-01-13T15:27:30.582Z",
+            "modified": "2024-01-13T17:15:07.276Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "get_group_users",
+                    "isPath": false
+                },
+                {
+                    "name": "groupId",
+                    "value": "1",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "bc8cd800-92af-41f7-9173-e6f786fc0717",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "e4772f81-ddb0-416f-8f94-2e233dea39af",
+            "name": "post unregistered user",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=add_unregistered_user",
+            "method": "POST",
+            "sortNum": 140000,
+            "created": "2024-01-13T18:58:30.156Z",
+            "modified": "2024-01-13T19:56:14.368Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "add_unregistered_user",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"creatorUserId\": \"2\",\n  \"name\" : \"user no registrado 3\",\n  \"groupId\": \"2\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "fbce793d-5683-43a9-be77-ad4c5071bed9",
+            "colId": "7d546bb1-6a8b-4724-a810-60ec2ca2b5bb",
+            "containerId": "0b2e2dc3-d33d-4669-b216-b966f58ffd98",
+            "name": "get user balances",
+            "url": "http://localhost/Proyectos/17%20-%20Gastos%20en%20comun/gastos-en-comun/backend/index.php?route=calculate_user_balances&group_id=2",
+            "method": "GET",
+            "sortNum": 150000,
+            "created": "2024-01-14T05:34:14.294Z",
+            "modified": "2024-01-14T06:09:16.461Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "route",
+                    "value": "calculate_user_balances",
+                    "isPath": false
+                },
+                {
+                    "name": "group_id",
+                    "value": "2",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ]
+}
