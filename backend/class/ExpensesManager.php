@@ -13,7 +13,7 @@ class ExpensesManager
   }
 
   // Post
-  public function addCommonExpense($description, $amount, $userId, $groupId)
+  public function addCommonExpense($description, $amount, $userId, $unregistered_user_id, $groupId, $isRegistered = true)
   {
     try {
       // Verify that the user is a member of the group
@@ -26,12 +26,26 @@ class ExpensesManager
         http_response_code(403); // Forbidden
         return ['error' => 'User does not have permission to add expenses to the group', 'status' => 403];
       }
+      // Check if unregisteredUserId is provided and validate that it corresponds to an unregistered user created by the $userId
+      if ($unregistered_user_id !== null) {
+        $stmt = $this->conn->prepare("SELECT id_unregistered_user FROM UnregisteredUsers WHERE id_unregistered_user = :unregisteredUserId AND creator_user_id = :userId AND group_id = :groupId");
+        $stmt->bindParam(':unregisteredUserId', $unregistered_user_id);
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':groupId', $groupId);
+        $stmt->execute();
+
+        if ($stmt->rowCount() === 0) {
+          http_response_code(403); // Forbidden
+          return ['error' => 'Invalid unregistered user ID', 'status' => 403];
+        }
+      }
 
       // Insert the expense
-      $stmt = $this->conn->prepare("INSERT INTO CommonExpenses (description, amount, date, user_id, group_id) VALUES (:description, :amount, NOW(), :userId, :groupId)");
+      $stmt = $this->conn->prepare("INSERT INTO CommonExpenses (description, amount, date, user_id, unregistered_user_id, group_id) VALUES (:description, :amount, NOW(), :userId, :unregisteredUserId, :groupId)");
       $stmt->bindParam(':description', $description);
       $stmt->bindParam(':amount', $amount);
       $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':unregisteredUserId', $unregistered_user_id);
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
@@ -130,14 +144,6 @@ class ExpensesManager
     }
   }
 
-
-  public function getGroupUsers($groupId)
-  {
-  }
-
-  public function addUnregisteredUserToGroup($email, $groupId)
-  {
-  }
 }
 
 

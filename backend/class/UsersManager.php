@@ -65,6 +65,40 @@ class UsersManager
     }
   }
 
+  // Unregistered users
+  public function addUnregisteredUserToGroup($creatorUserId, $name, $groupId)
+  {
+    try {
+      // Verificar que el creador pertenece al grupo
+      if (!$this->userBelongsToGroup($creatorUserId, $groupId)) {
+        http_response_code(403);
+        return ['error' => 'User does not have permission to add unregistered user to the group', 'status' => 403];
+      }
+
+      $stmt = $this->conn->prepare("INSERT INTO UnregisteredUsers (name, creator_user_id, group_id) VALUES (:name, :creatorUserId, :groupId)");
+      $stmt->bindParam(':name', $name);
+      $stmt->bindParam(':creatorUserId', $creatorUserId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      http_response_code(201);
+      return ['message' => 'Unregistered user added to the group successfully', 'status' => 201];
+    } catch (PDOException $e) {
+      http_response_code(500);
+      return ['error' => 'Failed to add unregistered user to the group', 'status' => 500];
+    }
+  }
+
+  private function userBelongsToGroup($userId, $groupId)
+  {
+    $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->bindParam(':groupId', $groupId);
+    $stmt->execute();
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $result['count'] > 0;
+  }
 
 
 }

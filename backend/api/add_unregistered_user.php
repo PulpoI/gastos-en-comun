@@ -1,20 +1,21 @@
 <?php
 
-require_once '../class/ExpensesManager.php';
+
+require_once 'class/UsersManager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = json_decode(file_get_contents('php://input'), true);
 
-  $email = $data['email'];
+  $creatorUserId = $data['creatorUserId'];
+  $name = $data['name'];
   $groupId = $data['groupId'];
 
-  $expensesManager = new ExpensesManager();
-  $response = $expensesManager->addUnregisteredUserToGroup($email, $groupId);
+  $usersManager = new UsersManager();
+  $response = $usersManager->addUnregisteredUserToGroup($creatorUserId, $name, $groupId);
 
   echo json_encode($response);
 } else {
   echo json_encode(['error' => 'Invalid request method']);
 }
-
 
 ?>

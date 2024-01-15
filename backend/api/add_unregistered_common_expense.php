@@ -8,12 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $description = $data['description'];
   $amount = $data['amount'];
   $userId = $data['userId'];
-  $unregisteredUserId = $data['unregisteredUserId'] ?? null;
-  $groupId = $data['groupId'] ?? null;
-
+  $groupId = $data['groupId'];
 
   $expensesManager = new ExpensesManager();
-  $response = $expensesManager->addCommonExpense($description, $amount, $userId, $unregisteredUserId, $groupId);
+  $response = $expensesManager->addCommonExpense($description, $amount, $userId, $groupId, false);
 
   echo json_encode($response);
 } else {

@@ -20,14 +20,26 @@ CREATE TABLE UserGroups (
     FOREIGN KEY (group_id) REFERENCES Groups(id_group)
 );
 
+CREATE TABLE UnregisteredUsers (
+    id_unregistered_user INT PRIMARY KEY AUTO_INCREMENT,
+    creator_user_id INT,
+    name VARCHAR(255) NOT NULL,
+    group_id INT,
+    FOREIGN KEY (creator_user_id) REFERENCES Users(id_user),
+    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
+);
+
 CREATE TABLE CommonExpenses (
     id_expense INT PRIMARY KEY AUTO_INCREMENT,
     description VARCHAR(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id INT,
+    unregistered_user_id INT,
     group_id INT,
     FOREIGN KEY (user_id) REFERENCES Users(id_user),
+    FOREIGN KEY (unregistered_user_id) REFERENCES UnregisteredUsers(id_unregistered_user),
     FOREIGN KEY (group_id) REFERENCES Groups(id_group)
 );
+
 

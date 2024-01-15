@@ -134,4 +134,42 @@ class GroupsManager
   }
 
 
+  public function calculateUserBalances($groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT Users.id_user, Users.name, Users.email FROM Users INNER JOIN UserGroups ON Users.id_user = UserGroups.user_id WHERE UserGroups.group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+      $stmt = $this->conn->prepare("SELECT id_expense, description, amount, user_id FROM CommonExpenses WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+
+      $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $expenses;
+
+
+
+      // $balances = [];
+
+      // foreach ($users as $user) {
+      //   $balances[$user['id_user']] = 0;
+      // }
+
+      // foreach ($expenses as $expense) {
+      //   $balances[$expense['user_id']] += $expense['amount'];
+      // }
+
+      // return ['balances' => $balances, 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to calculate user balances', 'status' => 500];
+    }
+  }
+
+
+
+
 }
