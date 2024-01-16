@@ -5,6 +5,7 @@ require_once 'Database.php';
 class ExpensesManager
 {
   private $conn;
+  private $userDetailsExepnses;
 
   public function __construct()
   {
@@ -173,21 +174,13 @@ class ExpensesManager
         } else {
           $details['amountToReceive'] = max(0, $details['amountPaid'] - $averageExpense);
           $details['amountOwed'] = max(0, $averageExpense - $details['amountPaid']);
-          if ($details['amountPaid'] > 0) {
-            $details['amountOwed'] += max(0, $averageExpense - $details['amountPaid']);
-          }
         }
       }
-
-
-      // 8. Crear un mensaje descriptivo de las deudas y montos a recibir
-      $debtMessage = $this->generateDebtOperations($userDetails);
 
       return [
         'totalExpenses' => $totalExpenses,
         'averageExpense' => $averageExpense,
         'userDetails' => $userDetails,
-        'debtMessage' => $debtMessage,
         'status' => 200
       ];
     } catch (PDOException $e) {
@@ -206,17 +199,17 @@ class ExpensesManager
   }
 
   // Función auxiliar para generar un mensaje descriptivo de las deudas y montos a recibir
-  private function generateDebtOperations($userDetails)
+  public function generateDebtOperations($userDetailsExepnses)
   {
     $debtOperations = [];
 
     // Filtrar usuarios que deben dinero
-    $debtors = array_filter($userDetails, function ($user) {
+    $debtors = array_filter($userDetailsExepnses, function ($user) {
       return $user['amountOwed'] > 0;
     });
 
     // Filtrar usuarios a los que les deben dinero
-    $creditors = array_filter($userDetails, function ($user) {
+    $creditors = array_filter($userDetailsExepnses, function ($user) {
       return $user['amountToReceive'] > 0;
     });
 
@@ -248,9 +241,8 @@ class ExpensesManager
       }
     }
 
-    return $debtOperations;
+    return [$debtOperations];
   }
-
 
 
 }

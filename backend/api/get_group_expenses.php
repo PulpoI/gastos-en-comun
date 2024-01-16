@@ -7,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
   $expensesManager = new ExpensesManager();
   $response = $expensesManager->getGroupExpensesSummary($groupId);
+  $response['mensaje'] = $expensesManager->generateDebtOperations($response['userDetails']);
+
 
   echo json_encode($response);
 } else {
