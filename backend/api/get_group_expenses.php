@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $groupId = $_GET['groupId'];
 
   $expensesManager = new ExpensesManager();
-  $response = $expensesManager->getGroupExpenses($groupId);
+  $response = $expensesManager->getGroupExpensesSummary($groupId);
 
   echo json_encode($response);
 } else {

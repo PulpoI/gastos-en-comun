@@ -12,7 +12,7 @@ class GroupsManager
     $this->conn = $db->getConnection();
   }
 
-  public function createGroup($userId, $groupName, $groupPassword, $isPublic)
+  public function createGroup($userId, $groupName, $groupPassword, $isPublic = false)
   {
     try {
       $hashedPassword = password_hash($groupPassword, PASSWORD_DEFAULT);
@@ -142,9 +142,9 @@ class GroupsManager
   public function calculateUserBalances($groupId)
   {
     try {
-     $users = $this->getGroupUsers($groupId)['users'];
+      $users = $this->getGroupUsers($groupId)['users'];
 
-     return ['users' => $users, 'status' => 200];
+      return ['users' => $users, 'status' => 200];
 
 
     } catch (PDOException $e) {

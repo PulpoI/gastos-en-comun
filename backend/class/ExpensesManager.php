@@ -117,107 +117,142 @@ class ExpensesManager
   }
 
   // Get all expenses from a group
-  public function getGroupExpenses($groupId)
+  public function getGroupExpensesSummary($groupId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
+      // 1. Obtener todos los usuarios del grupo
+      $stmtUsers = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE group_id = :groupId");
+      $stmtUsers->bindParam(':groupId', $groupId);
+      $stmtUsers->execute();
+      $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
 
-      $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      // 2. Obtener todos los gastos del grupo
+      $stmtExpenses = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId");
+      $stmtExpenses->bindParam(':groupId', $groupId);
+      $stmtExpenses->execute();
+      $expenses = $stmtExpenses->fetchAll(PDO::FETCH_ASSOC);
 
-      $total_expenses = $this->getGroupExpensesTotal($groupId);
-      $divide_expenses = $this->divideExpenses($groupId);
+      // 3. Obtener la cantidad de usuarios en el grupo
+      $userCount = count($userIds);
 
-      $balance = $this->getBalance('65a5bfcc99c0c', $groupId);
+      // 4. Calcular el total de gastos y el total dividido por la cantidad de usuarios
+      $totalExpenses = 0;
+      foreach ($expenses as $expense) {
+        $totalExpenses += (float) $expense['amount'];
+      }
+      $averageExpense = $totalExpenses / $userCount;
+
+      // 5. Obtener información detallada por usuario
+      $userDetails = [];
+      foreach ($userIds as $userId) {
+        if (!isset($userDetails[$userId])) {
+          $userDetails[$userId] = [
+            'name' => $this->getUserNameById($userId),
+            'totalExpense' => 0,
+            'amountPaid' => 0,
+            'amountOwed' => 0,
+            'amountToReceive' => 0,
+          ];
+        }
+      }
+
+      // 6. Calcular deudas y montos a recibir
+      foreach ($expenses as $expense) {
+        $userId = $expense['user_id'];
+        $amount = $expense['amount'];
+
+        $userDetails[$userId]['totalExpense'] += $amount;
+        $userDetails[$userId]['amountPaid'] += $amount;
+      }
+
+      // 7. Identificar usuarios que no han registrado gastos y asignarles el averageExpense
+      foreach ($userDetails as $userId => &$details) {
+        if ($details['amountPaid'] == 0) {
+          $details['amountToReceive'] = 0;
+          $details['amountOwed'] = $averageExpense;
+        } else {
+          $details['amountToReceive'] = max(0, $details['amountPaid'] - $averageExpense);
+          $details['amountOwed'] = max(0, $averageExpense - $details['amountPaid']);
+          if ($details['amountPaid'] > 0) {
+            $details['amountOwed'] += max(0, $averageExpense - $details['amountPaid']);
+          }
+        }
+      }
+
+
+      // 8. Crear un mensaje descriptivo de las deudas y montos a recibir
+      $debtMessage = $this->generateDebtOperations($userDetails);
 
       return [
-        'expenses' => $expenses, 
-        'total_expenses' => $total_expenses, 
-        'divide_expenses' => $divide_expenses,
-        'balances' => $balance,
-        'status' => 200];
+        'totalExpenses' => $totalExpenses,
+        'averageExpense' => $averageExpense,
+        'userDetails' => $userDetails,
+        'debtMessage' => $debtMessage,
+        'status' => 200
+      ];
     } catch (PDOException $e) {
-      return ['error' => 'Failed to retrieve group expenses', 'status' => 500];
+      return ['error' => 'Failed to retrieve group expenses summary', 'status' => 500];
     }
   }
 
-  // Calculate the total amount of expenses from a group (for the dashboard)
-  public function getGroupExpensesTotal($groupId)
+
+  // Función auxiliar para obtener el nombre de un usuario por su ID
+  private function getUserNameById($userId)
   {
-    try {
-      $stmt = $this->conn->prepare("SELECT SUM(amount) AS total FROM CommonExpenses WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
-
-      $total = $stmt->fetch(PDO::FETCH_ASSOC);
-      return $total;
-      // return ['total' => $total, 'status' => 200];
-    } catch (PDOException $e) {
-      return ['error' => 'Failed to retrieve group expenses total', 'status' => 500];
-    }
+    $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :userId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    return $stmt->fetchColumn();
   }
 
-  // Divide the expenses between the group members
-  public function divideExpenses($groupId)
+  // Función auxiliar para generar un mensaje descriptivo de las deudas y montos a recibir
+  private function generateDebtOperations($userDetails)
   {
-    try {
-      // Get the total amount of expenses
-      $total = $this->getGroupExpensesTotal($groupId);
-      $total = $total['total'];
+    $debtOperations = [];
 
-      // Get the number of group members with the same id
-      $stmt = $this->conn->prepare("SELECT COUNT(user_id) AS members FROM UserGroups WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
+    // Filtrar usuarios que deben dinero
+    $debtors = array_filter($userDetails, function ($user) {
+      return $user['amountOwed'] > 0;
+    });
 
-      $members = $stmt->fetch(PDO::FETCH_ASSOC); 
+    // Filtrar usuarios a los que les deben dinero
+    $creditors = array_filter($userDetails, function ($user) {
+      return $user['amountToReceive'] > 0;
+    });
 
-      $members = $members['members'];
+    // Obtener el total que se debe entre todos los deudores
+    $totalDebt = array_sum(array_column($debtors, 'amountOwed'));
 
-      // Divide the total amount of expenses between the members
-      $amount = $total / $members;
-      return $amount;
-    } catch (PDOException $e) {
-      return ['error' => 'Failed to divide expenses', 'status' => 500];
+    // Iterar sobre los acreedores
+    foreach ($creditors as $creditorId => $creditor) {
+      $creditorToReceive = $creditor['amountToReceive'];
+
+      // Iterar sobre los deudores
+      foreach ($debtors as $debtorId => $debtor) {
+        $debtorOwed = $debtor['amountOwed'];
+
+        // Si el acreedor aún espera recibir y el deudor aún debe dinero
+        if ($creditorToReceive > 0 && $debtorOwed > 0) {
+          $debtAmount = min($debtorOwed, $creditorToReceive);
+
+          // Registrar la operación
+          $operationKey = "operacion_" . count($debtOperations) + 1;
+          $debtOperations[$operationKey] = strtoupper($debtor['name']) . " debe pagarle " . $debtAmount . " a " . $creditor['name'];
+
+          $debtorOwed -= $debtAmount;
+          $creditorToReceive -= $debtAmount;
+
+          // Actualizar la deuda del deudor
+          $debtors[$debtorId]['amountOwed'] = $debtorOwed;
+        }
+      }
     }
+
+    return $debtOperations;
   }
 
-  // Calculate the amount of money that a user owes to the group and vice versa
-  public function getBalance($userId, $groupId)
-  {
-    try {
-      // Get the total amount of expenses
-      $total = $this->getGroupExpensesTotal($groupId);
-      $total = $total['total'];
 
-      // Get the number of members in the group
-      $stmt = $this->conn->prepare("SELECT COUNT(user_id) AS members FROM UserGroups WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
 
-      $members = $stmt->fetch(PDO::FETCH_ASSOC);
-      $members = $members['members'];
-
-      // Divide the total amount of expenses between the members
-      $amount = $total / $members;
-
-      // Get the amount of money that the user has spent
-      $stmt = $this->conn->prepare("SELECT SUM(amount) AS total FROM CommonExpenses WHERE user_id = :userId AND group_id = :groupId");
-      $stmt->bindParam(':userId', $userId);
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
-
-      $spent = $stmt->fetch(PDO::FETCH_ASSOC);
-      $spent = $spent['total'];
-
-      // Calculate the balance
-      $balance = $spent - $amount;
-      return $members;
-    } catch (PDOException $e) {
-      return ['error' => 'Failed to calculate balance', 'status' => 500];
-    }
-  }
 }
 
 

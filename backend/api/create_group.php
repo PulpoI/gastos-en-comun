@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $userId = $data['userId'];
   $groupName = $data['name'];
   $groupPassword = $data['password'];
-  $isPublic = $data['isPublic'] === 'true' ? true : false;
+  $isPublic = $data['isPublic'];
 
   $groupManager = new GroupsManager();
   $response = $groupManager->createGroup($userId, $groupName, $groupPassword, $isPublic);
