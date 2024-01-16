@@ -121,29 +121,29 @@ class ExpensesManager
   public function getGroupExpensesSummary($groupId)
   {
     try {
-      // 1. Obtener todos los usuarios del grupo
+      // 1. Get all users in the group
       $stmtUsers = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE group_id = :groupId");
       $stmtUsers->bindParam(':groupId', $groupId);
       $stmtUsers->execute();
       $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
 
-      // 2. Obtener todos los gastos del grupo
+      // 2. Get all expenses in the group
       $stmtExpenses = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId");
       $stmtExpenses->bindParam(':groupId', $groupId);
       $stmtExpenses->execute();
       $expenses = $stmtExpenses->fetchAll(PDO::FETCH_ASSOC);
 
-      // 3. Obtener la cantidad de usuarios en el grupo
+      // 3. Get the total number of users in the group
       $userCount = count($userIds);
 
-      // 4. Calcular el total de gastos y el total dividido por la cantidad de usuarios
+      // 4. Calculate the total expenses and the average expense per user
       $totalExpenses = 0;
       foreach ($expenses as $expense) {
         $totalExpenses += (float) $expense['amount'];
       }
       $averageExpense = $totalExpenses / $userCount;
 
-      // 5. Obtener información detallada por usuario
+      // 5. Get the details of each user
       $userDetails = [];
       foreach ($userIds as $userId) {
         if (!isset($userDetails[$userId])) {
@@ -157,7 +157,7 @@ class ExpensesManager
         }
       }
 
-      // 6. Calcular deudas y montos a recibir
+      // 6. Calculate the total expense and amount paid for each user
       foreach ($expenses as $expense) {
         $userId = $expense['user_id'];
         $amount = $expense['amount'];
@@ -166,7 +166,7 @@ class ExpensesManager
         $userDetails[$userId]['amountPaid'] += $amount;
       }
 
-      // 7. Identificar usuarios que no han registrado gastos y asignarles el averageExpense
+      // 7. Identify the users that did not pay anything
       foreach ($userDetails as $userId => &$details) {
         if ($details['amountPaid'] == 0) {
           $details['amountToReceive'] = 0;
@@ -189,7 +189,7 @@ class ExpensesManager
   }
 
 
-  // Función auxiliar para obtener el nombre de un usuario por su ID
+  // Get the name of a user by its id
   private function getUserNameById($userId)
   {
     $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :userId");
@@ -198,44 +198,44 @@ class ExpensesManager
     return $stmt->fetchColumn();
   }
 
-  // Función auxiliar para generar un mensaje descriptivo de las deudas y montos a recibir
+  // Generate debt operations
   public function generateDebtOperations($userDetailsExepnses)
   {
     $debtOperations = [];
 
-    // Filtrar usuarios que deben dinero
+    // Filter users that owe money
     $debtors = array_filter($userDetailsExepnses, function ($user) {
       return $user['amountOwed'] > 0;
     });
 
-    // Filtrar usuarios a los que les deben dinero
+    // Filter users that are owed money
     $creditors = array_filter($userDetailsExepnses, function ($user) {
       return $user['amountToReceive'] > 0;
     });
 
-    // Obtener el total que se debe entre todos los deudores
+    // Get the total amount owed
     $totalDebt = array_sum(array_column($debtors, 'amountOwed'));
 
-    // Iterar sobre los acreedores
+    // Each creditor will receive the same amount
     foreach ($creditors as $creditorId => $creditor) {
       $creditorToReceive = $creditor['amountToReceive'];
 
-      // Iterar sobre los deudores
+      // Each debtor will pay the same amount
       foreach ($debtors as $debtorId => $debtor) {
         $debtorOwed = $debtor['amountOwed'];
 
-        // Si el acreedor aún espera recibir y el deudor aún debe dinero
+        // If the creditor has already received all the money, stop
         if ($creditorToReceive > 0 && $debtorOwed > 0) {
           $debtAmount = min($debtorOwed, $creditorToReceive);
 
-          // Registrar la operación
+          // Register the debt operation
           $operationKey = "operacion_" . count($debtOperations) + 1;
           $debtOperations[$operationKey] = strtoupper($debtor['name']) . " debe pagarle " . $debtAmount . " a " . $creditor['name'];
 
           $debtorOwed -= $debtAmount;
           $creditorToReceive -= $debtAmount;
 
-          // Actualizar la deuda del deudor
+          // Update the amount owed by the debtor
           $debtors[$debtorId]['amountOwed'] = $debtorOwed;
         }
       }

@@ -1,19 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import ExpenseForm from './pages/ExpenseForm'
-import DebtsList from './pages/DebtsList'
+import { useState } from "react";
+import { AuthProvider } from "./context/AuthContext";
+
+import "./App.css";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <ExpenseForm />
-      
+      <AuthProvider>
+        <h1>Gastos en comun</h1>
+        <RegisterPage />
+      </AuthProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
