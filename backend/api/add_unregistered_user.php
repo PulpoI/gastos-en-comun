@@ -8,10 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $creatorUserId = $data['creatorUserId'];
   $name = $data['name'];
-  $groupId = $data['groupId'];
 
   $usersManager = new UsersManager();
-  $response = $usersManager->addUnregisteredUserToGroup($creatorUserId, $name, $groupId);
+  $response = $usersManager->addUnregisteredUserToGroup($creatorUserId, $name);
 
   echo json_encode($response);
 } else {

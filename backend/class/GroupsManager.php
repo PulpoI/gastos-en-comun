@@ -12,22 +12,25 @@ class GroupsManager
     $this->conn = $db->getConnection();
   }
 
-  public function createGroup($userId, $groupName, $groupPassword)
+  public function createGroup($userId, $groupName, $groupPassword, $isPublic)
   {
     try {
       $hashedPassword = password_hash($groupPassword, PASSWORD_DEFAULT);
       // Insert new group
-      $stmt = $this->conn->prepare("INSERT INTO Groups (name, password) VALUES (:name, :password)");
+      $stmt = $this->conn->prepare("INSERT INTO Groups (id_group, name, password, is_public) VALUES (:idGroup, :name, :password, :isPublic)");
+      $uniqueIdGroup = uniqid();
+      $stmt->bindParam(':idGroup', $uniqueIdGroup);
       $stmt->bindParam(':name', $groupName);
       $stmt->bindParam(':password', $hashedPassword);
+      $stmt->bindParam(':isPublic', $isPublic);
       $stmt->execute();
 
-      $groupId = $this->conn->lastInsertId(); // Get the ID of the newly created group
-
       // Add group administrator to UserGroups
-      $stmt = $this->conn->prepare("INSERT INTO UserGroups (user_id, group_id) VALUES (:userId, :groupId)");
+      $stmt = $this->conn->prepare("INSERT INTO UserGroups (id_user_group, user_id, group_id) VALUES (:idUserGroup, :userId, :groupId)");
+      $uniqueIdUserGroup = uniqid();
+      $stmt->bindParam(':idUserGroup', $uniqueIdUserGroup);
       $stmt->bindParam(':userId', $userId);
-      $stmt->bindParam(':groupId', $groupId);
+      $stmt->bindParam(':groupId', $uniqueIdGroup);
       $stmt->execute();
 
       http_response_code(201); // Created
@@ -73,7 +76,9 @@ class GroupsManager
         $userId = $userData['id_user'];
 
         // Insert user into UserGroups
-        $stmt = $this->conn->prepare("INSERT INTO UserGroups (user_id, group_id) VALUES (:userId, :groupId)");
+        $stmt = $this->conn->prepare("INSERT INTO UserGroups (id_user_group, user_id, group_id) VALUES (:idUserGroup, :userId, :groupId)");
+        $uniqueId = uniqid();
+        $stmt->bindParam(':idUserGroup', $uniqueId);
         $stmt->bindParam(':userId', $userId);
         $stmt->bindParam(':groupId', $groupId);
         $stmt->execute();
@@ -137,33 +142,11 @@ class GroupsManager
   public function calculateUserBalances($groupId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT Users.id_user, Users.name, Users.email FROM Users INNER JOIN UserGroups ON Users.id_user = UserGroups.user_id WHERE UserGroups.group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
-      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+     $users = $this->getGroupUsers($groupId)['users'];
+
+     return ['users' => $users, 'status' => 200];
 
 
-      $stmt = $this->conn->prepare("SELECT id_expense, description, amount, user_id FROM CommonExpenses WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
-
-
-      $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      return $expenses;
-
-
-
-      // $balances = [];
-
-      // foreach ($users as $user) {
-      //   $balances[$user['id_user']] = 0;
-      // }
-
-      // foreach ($expenses as $expense) {
-      //   $balances[$expense['user_id']] += $expense['amount'];
-      // }
-
-      // return ['balances' => $balances, 'status' => 200];
     } catch (PDOException $e) {
       return ['error' => 'Failed to calculate user balances', 'status' => 500];
     }

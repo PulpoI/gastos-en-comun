@@ -18,7 +18,6 @@ class UsersManager
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400); // Bad Request
         return ['error' => 'Invalid email format'];
-
       }
       // verify that the email is not already registered
       $stmt = $this->conn->prepare("SELECT * FROM Users WHERE email = :email");
@@ -31,7 +30,9 @@ class UsersManager
       }
       // register the user
       $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-      $stmt = $this->conn->prepare("INSERT INTO Users (name, email, password) VALUES (:name, :email, :password)");
+      $stmt = $this->conn->prepare("INSERT INTO Users (id_user, name, email, password, creator_user_id) VALUES (:id_user, :name, :email, :password, :id_user)");
+      $generatedId = uniqid();
+      $stmt->bindParam(':id_user', $generatedId);
       $stmt->bindParam(':name', $name);
       $stmt->bindParam(':email', $email);
       $stmt->bindParam(':password', $hashedPassword);
@@ -66,40 +67,22 @@ class UsersManager
   }
 
   // Unregistered users
-  public function addUnregisteredUserToGroup($creatorUserId, $name, $groupId)
+  public function addUnregisteredUserToGroup($creatorUserId, $name)
   {
     try {
-      // Verificar que el creador pertenece al grupo
-      if (!$this->userBelongsToGroup($creatorUserId, $groupId)) {
-        http_response_code(403);
-        return ['error' => 'User does not have permission to add unregistered user to the group', 'status' => 403];
-      }
-
-      $stmt = $this->conn->prepare("INSERT INTO UnregisteredUsers (name, creator_user_id, group_id) VALUES (:name, :creatorUserId, :groupId)");
+      $stmt = $this->conn->prepare("INSERT INTO Users (id_user, name, is_registered, creator_user_id) VALUES (:id_user, :name, false, :creatorUserId)");
+      $generatedId = uniqid();
+      $stmt->bindParam(':id_user', $generatedId);
       $stmt->bindParam(':name', $name);
       $stmt->bindParam(':creatorUserId', $creatorUserId);
-      $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
       http_response_code(201);
-      return ['message' => 'Unregistered user added to the group successfully', 'status' => 201];
+      return ['message' => 'Unregistered user created successfully', 'status' => 201];
     } catch (PDOException $e) {
       http_response_code(500);
-      return ['error' => 'Failed to add unregistered user to the group', 'status' => 500];
+      return ['error' => 'Failed to create unregistered user', 'status' => 500];
     }
   }
-
-  private function userBelongsToGroup($userId, $groupId)
-  {
-    $stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
-    $stmt->bindParam(':userId', $userId);
-    $stmt->bindParam(':groupId', $groupId);
-    $stmt->execute();
-
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    return $result['count'] > 0;
-  }
-
 
 }
 

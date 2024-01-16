@@ -8,9 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $userId = $data['userId'];
   $groupName = $data['name'];
   $groupPassword = $data['password'];
+  $isPublic = $data['isPublic'] === 'true' ? true : false;
 
   $groupManager = new GroupsManager();
-  $response = $groupManager->createGroup($userId, $groupName, $groupPassword);
+  $response = $groupManager->createGroup($userId, $groupName, $groupPassword, $isPublic);
 
   echo json_encode($response);
 } else {

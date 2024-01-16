@@ -13,7 +13,7 @@ class ExpensesManager
   }
 
   // Post
-  public function addCommonExpense($description, $amount, $userId, $unregistered_user_id, $groupId, $isRegistered = true)
+  public function addCommonExpense($description, $amount, $userId, $groupId)
   {
     try {
       // Verify that the user is a member of the group
@@ -26,26 +26,14 @@ class ExpensesManager
         http_response_code(403); // Forbidden
         return ['error' => 'User does not have permission to add expenses to the group', 'status' => 403];
       }
-      // Check if unregisteredUserId is provided and validate that it corresponds to an unregistered user created by the $userId
-      if ($unregistered_user_id !== null) {
-        $stmt = $this->conn->prepare("SELECT id_unregistered_user FROM UnregisteredUsers WHERE id_unregistered_user = :unregisteredUserId AND creator_user_id = :userId AND group_id = :groupId");
-        $stmt->bindParam(':unregisteredUserId', $unregistered_user_id);
-        $stmt->bindParam(':userId', $userId);
-        $stmt->bindParam(':groupId', $groupId);
-        $stmt->execute();
-
-        if ($stmt->rowCount() === 0) {
-          http_response_code(403); // Forbidden
-          return ['error' => 'Invalid unregistered user ID', 'status' => 403];
-        }
-      }
 
       // Insert the expense
-      $stmt = $this->conn->prepare("INSERT INTO CommonExpenses (description, amount, date, user_id, unregistered_user_id, group_id) VALUES (:description, :amount, NOW(), :userId, :unregisteredUserId, :groupId)");
+      $stmt = $this->conn->prepare("INSERT INTO CommonExpenses (id_expense, description, amount, date, user_id, group_id) VALUES (:idExpense, :description, :amount, NOW(), :userId, :groupId)");
+      $uniqueId = uniqid();
+      $stmt->bindParam(':idExpense', $uniqueId);
       $stmt->bindParam(':description', $description);
       $stmt->bindParam(':amount', $amount);
       $stmt->bindParam(':userId', $userId);
-      $stmt->bindParam(':unregisteredUserId', $unregistered_user_id);
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
@@ -98,7 +86,7 @@ class ExpensesManager
   public function deleteCommonExpense($expenseId, $userId, $groupId)
   {
     try {
-      // Verificar si el usuario pertenece al grupo
+      // Verify that the user is a member of the group
       $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
       $stmt->bindParam(':userId', $userId);
       $stmt->bindParam(':groupId', $groupId);
@@ -109,7 +97,7 @@ class ExpensesManager
         return ['error' => 'User does not have permission to delete expenses in the group', 'status' => 403];
       }
 
-      // Eliminar el gasto en común de la base de datos
+      // Delete the expense
       $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE id_expense = :expenseId AND user_id = :userId AND group_id = :groupId");
       $stmt->bindParam(':expenseId', $expenseId);
       $stmt->bindParam(':userId', $userId);
@@ -138,12 +126,98 @@ class ExpensesManager
 
       $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-      return ['expenses' => $expenses, 'status' => 200];
+      $total_expenses = $this->getGroupExpensesTotal($groupId);
+      $divide_expenses = $this->divideExpenses($groupId);
+
+      $balance = $this->getBalance('65a5bfcc99c0c', $groupId);
+
+      return [
+        'expenses' => $expenses, 
+        'total_expenses' => $total_expenses, 
+        'divide_expenses' => $divide_expenses,
+        'balances' => $balance,
+        'status' => 200];
     } catch (PDOException $e) {
       return ['error' => 'Failed to retrieve group expenses', 'status' => 500];
     }
   }
 
+  // Calculate the total amount of expenses from a group (for the dashboard)
+  public function getGroupExpensesTotal($groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT SUM(amount) AS total FROM CommonExpenses WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $total = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $total;
+      // return ['total' => $total, 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to retrieve group expenses total', 'status' => 500];
+    }
+  }
+
+  // Divide the expenses between the group members
+  public function divideExpenses($groupId)
+  {
+    try {
+      // Get the total amount of expenses
+      $total = $this->getGroupExpensesTotal($groupId);
+      $total = $total['total'];
+
+      // Get the number of group members with the same id
+      $stmt = $this->conn->prepare("SELECT COUNT(user_id) AS members FROM UserGroups WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $members = $stmt->fetch(PDO::FETCH_ASSOC); 
+
+      $members = $members['members'];
+
+      // Divide the total amount of expenses between the members
+      $amount = $total / $members;
+      return $amount;
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to divide expenses', 'status' => 500];
+    }
+  }
+
+  // Calculate the amount of money that a user owes to the group and vice versa
+  public function getBalance($userId, $groupId)
+  {
+    try {
+      // Get the total amount of expenses
+      $total = $this->getGroupExpensesTotal($groupId);
+      $total = $total['total'];
+
+      // Get the number of members in the group
+      $stmt = $this->conn->prepare("SELECT COUNT(user_id) AS members FROM UserGroups WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $members = $stmt->fetch(PDO::FETCH_ASSOC);
+      $members = $members['members'];
+
+      // Divide the total amount of expenses between the members
+      $amount = $total / $members;
+
+      // Get the amount of money that the user has spent
+      $stmt = $this->conn->prepare("SELECT SUM(amount) AS total FROM CommonExpenses WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $spent = $stmt->fetch(PDO::FETCH_ASSOC);
+      $spent = $spent['total'];
+
+      // Calculate the balance
+      $balance = $spent - $amount;
+      return $members;
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to calculate balance', 'status' => 500];
+    }
+  }
 }
 
 
