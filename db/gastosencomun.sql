@@ -19,8 +19,11 @@ CREATE TABLE SessionTokens (
 CREATE TABLE Groups (
     id_group VARCHAR(13) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     password VARCHAR(255) NOT NULL,
-    is_public BOOLEAN NOT NULL DEFAULT false
+    is_public BOOLEAN NOT NULL DEFAULT false,
+    creator_user_id VARCHAR(13),
+    FOREIGN KEY (creator_user_id) REFERENCES Users(id_user)
 );
 
 CREATE TABLE UserGroups (

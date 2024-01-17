@@ -17,12 +17,13 @@ class GroupsManager
     try {
       $hashedPassword = password_hash($groupPassword, PASSWORD_DEFAULT);
       // Insert new group
-      $stmt = $this->conn->prepare("INSERT INTO Groups (id_group, name, password, is_public) VALUES (:idGroup, :name, :password, :isPublic)");
+      $stmt = $this->conn->prepare("INSERT INTO Groups (id_group, name, password, is_public, creator_user_id) VALUES (:idGroup, :name, :password, :isPublic, :userId)");
       $uniqueIdGroup = uniqid();
       $stmt->bindParam(':idGroup', $uniqueIdGroup);
       $stmt->bindParam(':name', $groupName);
       $stmt->bindParam(':password', $hashedPassword);
       $stmt->bindParam(':isPublic', $isPublic);
+      $stmt->bindParam(':userId', $userId);
       $stmt->execute();
 
       // Add group administrator to UserGroups
@@ -120,6 +121,21 @@ class GroupsManager
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
       return ['error' => 'Failed to verify group password', 'status' => 500];
+    }
+  }
+
+  public function getGroupsByUserId($userId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT Groups.id_group, Groups.name, Groups.is_public FROM Groups INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id WHERE UserGroups.user_id = :userId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->execute();
+
+      $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      return ['groups' => $groups, 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to get groups', 'status' => 500];
     }
   }
 

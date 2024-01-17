@@ -17,4 +17,5 @@ return [
   'create_token' => 'api/create_token.php',
   'logout_user' => 'api/logout_user.php',
   'verify_token' => 'api/verify_token.php',
+  'get_groups_by_user_id' => 'api/get_groups_by_user_id.php',
 ];

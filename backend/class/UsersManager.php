@@ -21,7 +21,7 @@ class UsersManager
     try {
       if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         http_response_code(400); // Bad Request
-        return ['error' => 'Invalid email format'];
+        return ['error' => 'Formato de email inválido'];
       }
       // verify that the email is not already registered
       $stmt = $this->conn->prepare("SELECT * FROM Users WHERE email = :email");
@@ -30,7 +30,7 @@ class UsersManager
 
       if ($stmt->rowCount() > 0) {
         http_response_code(400);
-        return ['error' => 'User with this email already exists'];
+        return ['error' => 'Ya existe un usuario con ese email'];
       }
       // register the user
       $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -43,14 +43,16 @@ class UsersManager
       $stmt->bindParam(':password', $hashedPassword);
 
       $stmt->execute();
-      $token = $this->token->createToken($generatedId);
 
+
+      $user['email'] = $email;
+      $user['password'] = $password;
 
       http_response_code(200);
-      return ['message' => 'User registered successfully', 'status' => 200, 'token' => $token];
+      return ['user' => $user, 'message' => 'Usuario registrado correctamente', 'status' => 200];
     } catch (PDOException $e) {
       http_response_code(500);
-      return ['error' => 'Failed to register user', 'status' => 500];
+      return ['error' => 'Fallo el registro', 'status' => 500];
     }
   }
 
@@ -68,17 +70,17 @@ class UsersManager
           $stmt->execute();
           $token = $this->token->createToken($user['id_user']);
           http_response_code(200);
-          return ['user' => $user['id_user'], 'status' => 200, 'token' => $token];
+          return ['user' => $user, 'status' => 200, 'token' => $token];
         } else {
           http_response_code(401);
-          return ['error' => 'Invalid password', 'status' => 401];
+          return ['error' => 'Contraseña incorrecta', 'status' => 401];
         }
       } else {
         http_response_code(404);
-        return ['error' => 'User not found', 'status' => 404];
+        return ['error' => 'Usuario no encontrado', 'status' => 404];
       }
     } catch (PDOException $e) {
-      return ['error' => 'Failed to login', 'status' => 500];
+      return ['error' => 'Falló el inicio de sesión', 'status' => 500];
     }
   }
 
