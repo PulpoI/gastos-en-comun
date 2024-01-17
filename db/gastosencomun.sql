@@ -8,6 +8,14 @@ CREATE TABLE Users (
     FOREIGN KEY (creator_user_id) REFERENCES Users(id_user)
 );
 
+CREATE TABLE SessionTokens (
+    id_token VARCHAR(13) PRIMARY KEY,
+    user_id VARCHAR(13),
+    token VARCHAR(255) UNIQUE NOT NULL,
+    expiration_time DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id_user)
+);
+
 CREATE TABLE Groups (
     id_group VARCHAR(13) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -34,5 +42,6 @@ CREATE TABLE CommonExpenses (
     FOREIGN KEY (user_id) REFERENCES Users(id_user),
     FOREIGN KEY (group_id) REFERENCES Groups(id_group)
 );
+
 
 

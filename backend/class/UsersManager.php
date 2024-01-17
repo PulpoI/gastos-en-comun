@@ -1,15 +1,19 @@
 <?php
 
 require_once 'Database.php';
+require_once 'SessionToken.php';
 
 class UsersManager
 {
   private $conn;
+  private $token;
 
   public function __construct()
   {
     $db = new Database();
     $this->conn = $db->getConnection();
+    $token = new SessionToken();
+    $this->token = $token;
   }
 
   public function createUser($name, $email, $password)
@@ -32,13 +36,18 @@ class UsersManager
       $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
       $stmt = $this->conn->prepare("INSERT INTO Users (id_user, name, email, password, creator_user_id) VALUES (:id_user, :name, :email, :password, :id_user)");
       $generatedId = uniqid();
+
       $stmt->bindParam(':id_user', $generatedId);
       $stmt->bindParam(':name', $name);
       $stmt->bindParam(':email', $email);
       $stmt->bindParam(':password', $hashedPassword);
+
       $stmt->execute();
+      $token = $this->token->createToken($generatedId);
+
+
       http_response_code(200);
-      return ['message' => 'User registered successfully', 'status' => 200];
+      return ['message' => 'User registered successfully', 'status' => 200, 'token' => $token];
     } catch (PDOException $e) {
       http_response_code(500);
       return ['error' => 'Failed to register user', 'status' => 500];
@@ -56,8 +65,10 @@ class UsersManager
       if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if (password_verify($password, $user['password'])) {
+          $stmt->execute();
+          $token = $this->token->createToken($user['id_user']);
           http_response_code(200);
-          return ['user' => $user, 'status' => 200];
+          return ['user' => $user['id_user'], 'status' => 200, 'token' => $token];
         } else {
           http_response_code(401);
           return ['error' => 'Invalid password', 'status' => 401];
@@ -68,6 +79,18 @@ class UsersManager
       }
     } catch (PDOException $e) {
       return ['error' => 'Failed to login', 'status' => 500];
+    }
+  }
+
+  public function logout($token)
+  {
+    try {
+      $this->token->deleteToken($token);
+      http_response_code(200);
+      return ['message' => 'User logged out successfully', 'status' => 200];
+    } catch (PDOException $e) {
+      http_response_code(500);
+      return ['error' => 'Failed to logout user', 'status' => 500];
     }
   }
 

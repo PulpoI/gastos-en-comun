@@ -14,4 +14,7 @@ return [
   'add_unregistered_user' => 'api/add_unregistered_user.php',
   'calculate_user_balances' => 'api/calculate_user_balances.php',
   'login_user' => 'api/login_user.php',
+  'create_token' => 'api/create_token.php',
+  'logout_user' => 'api/logout_user.php',
+  'verify_token' => 'api/verify_token.php',
 ];

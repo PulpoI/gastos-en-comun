@@ -35,7 +35,7 @@ La aplicación de Gastos Compartidos permite a los usuarios llevar un registro d
 
 ## Diagrama de Base de Datos
 
-![Diagrama de Base de Datos]("./db/gastosencomun.png")
+![Diagrama de Base de Datos](db/gastosencomun.png)
 
 ## Instalación y Ejecución
 

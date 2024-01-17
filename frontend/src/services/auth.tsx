@@ -25,3 +25,16 @@ export const loginRequest = async (user: object) => {
     throw new Error("Failed to fetch data");
   }
 };
+
+export const verifyToken = async (token: string, userId: string) => {
+  try {
+    const response = fetch(API + "verify_token", {
+      method: "POST",
+      body: JSON.stringify({ token, userId }),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
