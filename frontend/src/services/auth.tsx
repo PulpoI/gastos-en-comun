@@ -12,3 +12,16 @@ export const signupRequest = async (user: object) => {
     throw new Error("Failed to fetch data");
   }
 };
+
+export const loginRequest = async (user: object) => {
+  try {
+    const response = fetch(API + "login_user", {
+      method: "POST",
+      body: JSON.stringify(user),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};

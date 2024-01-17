@@ -13,4 +13,5 @@ return [
   'get_group_users' => 'api/get_group_users.php',
   'add_unregistered_user' => 'api/add_unregistered_user.php',
   'calculate_user_balances' => 'api/calculate_user_balances.php',
+  'login_user' => 'api/login_user.php',
 ];

@@ -45,6 +45,32 @@ class UsersManager
     }
   }
 
+  public function login($email, $password)
+  {
+    try {
+      // check if the user exists
+      $stmt = $this->conn->prepare("SELECT * FROM Users WHERE email = :email");
+      $stmt->bindParam(':email', $email);
+      $stmt->execute();
+
+      if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (password_verify($password, $user['password'])) {
+          http_response_code(200);
+          return ['user' => $user, 'status' => 200];
+        } else {
+          http_response_code(401);
+          return ['error' => 'Invalid password', 'status' => 401];
+        }
+      } else {
+        http_response_code(404);
+        return ['error' => 'User not found', 'status' => 404];
+      }
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to login', 'status' => 500];
+    }
+  }
+
   public function getUserByEmail($email)
   {
     try {
@@ -83,6 +109,8 @@ class UsersManager
       return ['error' => 'Failed to create unregistered user', 'status' => 500];
     }
   }
+
+
 
 }
 
