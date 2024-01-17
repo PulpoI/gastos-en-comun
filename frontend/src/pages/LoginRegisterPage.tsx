@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type Inputs = {
   name: string;
@@ -16,11 +17,19 @@ const LoginRegisterPage = (type) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const { signup, login, errors: registerErrors } = useAuth();
+  const { signup, login, isAuthenticated, errors: registerErrors } = useAuth();
+
+  const navigate = useNavigate();
 
   const onSubmit = handleSubmit((values) => {
     type.type === "login" ? login(values) : signup(values);
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <>

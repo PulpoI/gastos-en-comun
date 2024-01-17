@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+
+import iconUser from "../assets/img/avatar.gif";
+import { useAuth } from "../context/AuthContext";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenIcon, setIsOpenIcon] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  const { logout } = useAuth();
+
+  function logoutSession() {
+    logout();
+  }
 
   return (
     <nav
@@ -65,31 +76,109 @@ const Navbar = () => {
             isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"
           }`}
         >
-          <div className="flex flex-col md:flex-row md:mx-6">
+          <div className="flex flex-col items-center md:flex-row md:mx-6">
             <Link
               to={"/"}
               className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
             >
               Calcular gastos
             </Link>
-            <a
-              className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
-              href="#"
-            >
-              Gastos
-            </a>
+            {isAuthenticated && (
+              <Link
+                to={"/gastos"}
+                className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+              >
+                Gastos
+              </Link>
+            )}
             <a
               className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
               href="#"
             >
               Contacto
             </a>
-            <Link
-              to={"/login"}
-              className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
-            >
-              Iniciar sesión
-            </Link>
+
+            {!isAuthenticated ? (
+              <Link
+                to={"/login"}
+                className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+              >
+                Iniciar sesión
+              </Link>
+            ) : (
+              <>
+                <div className="relative inline-block">
+                  {/* Dropdown toggle button */}
+                  <button
+                    onClick={() => setIsOpenIcon(!isOpenIcon)}
+                    className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none"
+                  >
+                    <div className="flex items-center gap-x-6 md:mx-4 md:my-0">
+                      <a>
+                        <img
+                          className="object-cover w-10 h-10 rounded-full"
+                          src={iconUser}
+                          alt=""
+                        ></img>
+                      </a>
+                    </div>
+                  </button>
+
+                  {/* Dropdown menu */}
+                  {isOpenIcon && (
+                    <div
+                      onClick={() => setIsOpen(false)}
+                      className="absolute right-0 z-20 w-48 py-2 mt-2 origin-top-right bg-white rounded-md shadow-xl dark:bg-gray-800"
+                    >
+                      <a
+                        href="#"
+                        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Ver perfil
+                      </a>
+
+                      <a
+                        href="#"
+                        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Configuracion
+                      </a>
+
+                      <hr className="border-gray-200 dark:border-gray-700" />
+
+                      <a
+                        href="#"
+                        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Contactos
+                      </a>
+
+                      <a
+                        href="#"
+                        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Invitar amigos
+                      </a>
+
+                      <hr className="border-gray-200 dark:border-gray-700" />
+
+                      <a
+                        href="#"
+                        className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Ayuda
+                      </a>
+                      <a
+                        onClick={logoutSession}
+                        className="cursor-pointer block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        Cerrar sesión
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -1,11 +1,19 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginRequest, signupRequest, verifyToken } from "../services/auth";
+import {
+  loginRequest,
+  logoutRequest,
+  signupRequest,
+  verifyToken,
+} from "../services/auth";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext({
   signup: () => {},
   login: () => {},
+  logout: () => {},
   errors: {},
+  isAuthenticated: false,
 });
 
 export const useAuth = () => {
@@ -28,11 +36,7 @@ export const AuthProvider = ({ children }: any) => {
   const signup = async (user: { email: string }) => {
     const res = await signupRequest(user);
     if (!res.error) {
-      setUser(res.user.id_user);
-      setIsAuthenticated(true);
-      setCookie("gc_user", res.user.user.id, 365);
-      setCookie("gc_token", res.token, 365);
-      setErrors(res.message);
+      login(res.user);
     } else {
       setErrors(res.error);
     }
@@ -43,33 +47,51 @@ export const AuthProvider = ({ children }: any) => {
     if (!res.error) {
       setUser(res.user.id_user);
       setIsAuthenticated(true);
-      setCookie("gc_user", res.user, 365);
+      setCookie("gc_user", res.user.id_user, 365);
       setCookie("gc_token", res.token, 365);
       setErrors(res.message);
+      toast.success(`Bienvenido/a ${res.user.name}`);
+    } else {
+      setErrors(res.error);
+      toast.error(res.error);
+    }
+  };
+
+  async function checkLogin() {
+    const cookies = Cookies.get();
+    if (cookies.gc_token && cookies.gc_user) {
+      const res = await verifyToken(cookies.gc_token, cookies.gc_user);
+      if (!res.error) {
+        setUser(cookies.gc_user);
+        setIsAuthenticated(true);
+      } else {
+        setErrors(res.error);
+      }
+    }
+  }
+
+  const logout = async (token: string) => {
+    const cookies = Cookies.get();
+    const res = await logoutRequest(cookies.gc_token);
+    if (!res.error) {
+      Cookies.remove("gc_user");
+      Cookies.remove("gc_token");
+      setUser(null);
+      setIsAuthenticated(false);
+      toast.info("Se ha cerrado la sesión");
     } else {
       setErrors(res.error);
     }
   };
 
   useEffect(() => {
-    async function checkLogin() {
-      const cookies = Cookies.get();
-      if (cookies.gc_token && cookies.gc_user) {
-        const res = await verifyToken(cookies.gc_token, cookies.gc_user);
-        if (!res.error) {
-          setUser(cookies.gc_user);
-          setIsAuthenticated(true);
-        } else {
-          setErrors(res.error);
-        }
-      }
-    }
     checkLogin();
   }, []);
 
   const contextValue = {
     signup,
     login,
+    logout,
     errors,
     user,
     isAuthenticated,

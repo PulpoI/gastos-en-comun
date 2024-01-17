@@ -38,3 +38,17 @@ export const verifyToken = async (token: string, userId: string) => {
     throw new Error("Failed to fetch data");
   }
 };
+
+export const logoutRequest = async (token: string) => {
+  try {
+    const response = fetch(API + "logout_user", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}
+
