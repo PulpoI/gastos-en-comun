@@ -26,7 +26,7 @@ export const loginRequest = async (user: object) => {
   }
 };
 
-export const verifyToken = async (token: string, userId: string) => {
+export const verifyTokenRequest = async (token: string, userId: string) => {
   try {
     const response = fetch(API + "verify_token", {
       method: "POST",

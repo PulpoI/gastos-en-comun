@@ -3,7 +3,7 @@ import {
   loginRequest,
   logoutRequest,
   signupRequest,
-  verifyToken,
+  verifyTokenRequest,
 } from "../services/auth";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
@@ -14,6 +14,8 @@ export const AuthContext = createContext({
   logout: () => {},
   errors: {},
   isAuthenticated: false,
+  user: "",
+  loading: true,
 });
 
 export const useAuth = () => {
@@ -28,6 +30,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<object | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState<boolean>(true);
 
   function setCookie(name: string, value: string, expires: number) {
     Cookies.set(name, value, { expires: expires });
@@ -60,17 +63,18 @@ export const AuthProvider = ({ children }: any) => {
   async function checkLogin() {
     const cookies = Cookies.get();
     if (cookies.gc_token && cookies.gc_user) {
-      const res = await verifyToken(cookies.gc_token, cookies.gc_user);
+      const res = await verifyTokenRequest(cookies.gc_token, cookies.gc_user);
       if (!res.error) {
         setUser(cookies.gc_user);
         setIsAuthenticated(true);
+        setLoading(false);
       } else {
         setErrors(res.error);
       }
     }
   }
 
-  const logout = async (token: string) => {
+  const logout = async () => {
     const cookies = Cookies.get();
     const res = await logoutRequest(cookies.gc_token);
     if (!res.error) {
@@ -95,6 +99,7 @@ export const AuthProvider = ({ children }: any) => {
     errors,
     user,
     isAuthenticated,
+    loading,
   };
 
   return (

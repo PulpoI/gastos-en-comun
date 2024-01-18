@@ -1,6 +1,6 @@
 import { API } from "./apirest";
 
-export const getGroups = async (userId: string) => {
+export const getGroupsRequest = async (userId: string) => {
   try {
     const response = fetch(API + "get_groups_by_user_id&userId=" + userId, {
       method: "GET",

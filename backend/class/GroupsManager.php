@@ -127,7 +127,7 @@ class GroupsManager
   public function getGroupsByUserId($userId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT Groups.id_group, Groups.name, Groups.is_public FROM Groups INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id WHERE UserGroups.user_id = :userId");
+      $stmt = $this->conn->prepare("SELECT * FROM Groups INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id WHERE UserGroups.user_id = :userId");
       $stmt->bindParam(':userId', $userId);
       $stmt->execute();
 
