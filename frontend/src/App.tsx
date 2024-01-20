@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import RegisterPage from "./pages/LoginRegisterPage";
+import LoginRegisterPage from "./pages/LoginRegisterPage";
 
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
@@ -9,6 +9,7 @@ import Notifications from "./components/Notifications";
 import GroupsExpenses from "./pages/GroupsExpenses";
 import ProtectedRoute from "./ProtectedRoute";
 import { GroupsProvider } from "./context/GroupsContext";
+import GroupPage from "./pages/GroupPage";
 
 function App() {
   return (
@@ -23,12 +24,18 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route
                   path="/registro"
-                  element={<RegisterPage type="registro" />}
+                  element={<LoginRegisterPage type="registro" />}
                 />
-                <Route path="/login" element={<RegisterPage type="login" />} />
+                <Route
+                  path="/login"
+                  element={<LoginRegisterPage type="login" />}
+                />
+
+                <Route path="/grupo/:groupId" element={<GroupPage />} />
 
                 <Route element={<ProtectedRoute />}>
-                  <Route path="/gastos" element={<GroupsExpenses />} />
+                  <Route path="/grupos" element={<GroupsExpenses />} />
+                  <Route path="/grupo/:groupId" element={<GroupPage />} />
                 </Route>
               </Routes>
             </main>

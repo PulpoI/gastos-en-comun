@@ -1,16 +1,17 @@
 <?php
 
+require_once 'class/GroupsManager.php';
 
-require_once 'class/UsersManager.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = json_decode(file_get_contents('php://input'), true);
 
+  $userId = $data['userId'];
+  $groupId = $data['groupId'];
   $creatorUserId = $data['creatorUserId'];
-  $name = $data['name'];
 
-  $usersManager = new UsersManager();
-  $response = $usersManager->addUnregisteredUser($creatorUserId, $name);
+  $groupsManager = new GroupsManager();
+  $response = $groupsManager->addUnregisteredUserToGroup($userId, $groupId, $creatorUserId);
 
   echo json_encode($response);
 } else {

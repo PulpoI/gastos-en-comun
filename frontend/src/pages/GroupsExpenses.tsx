@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useGroups } from "../context/GroupsContext";
 import CardGroup from "../components/CardGroup";
+import { Link } from "react-router-dom";
 
 const GroupsExpenses = () => {
   const { user } = useAuth();
@@ -10,8 +11,6 @@ const GroupsExpenses = () => {
   useEffect(() => {
     getGroups(user);
   }, []);
-
-  console.log(grupsUser);
 
   return (
     <>

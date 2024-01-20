@@ -7,6 +7,7 @@ import {
 } from "../services/auth";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { set } from "react-hook-form";
 
 export const AuthContext = createContext({
   signup: () => {},
@@ -15,7 +16,8 @@ export const AuthContext = createContext({
   errors: {},
   isAuthenticated: false,
   user: "",
-  loading: true,
+  checkLogin: () => {},
+  loading: false,
 });
 
 export const useAuth = () => {
@@ -30,7 +32,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<object | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   function setCookie(name: string, value: string, expires: number) {
     Cookies.set(name, value, { expires: expires });
@@ -61,6 +63,7 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   async function checkLogin() {
+    setLoading(true);
     const cookies = Cookies.get();
     if (cookies.gc_token && cookies.gc_user) {
       const res = await verifyTokenRequest(cookies.gc_token, cookies.gc_user);
@@ -70,6 +73,7 @@ export const AuthProvider = ({ children }: any) => {
         setLoading(false);
       } else {
         setErrors(res.error);
+        setLoading(false);
       }
     }
   }
@@ -96,6 +100,7 @@ export const AuthProvider = ({ children }: any) => {
     signup,
     login,
     logout,
+    checkLogin,
     errors,
     user,
     isAuthenticated,

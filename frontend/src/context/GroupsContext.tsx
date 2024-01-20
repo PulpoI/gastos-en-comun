@@ -1,10 +1,16 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getGroupsRequest } from "../services/groups";
+import { getGroupExpensesRequest, getGroupsRequest } from "../services/groups";
 import { useAuth } from "./AuthContext";
 
 export const GroupsContext = createContext({
   getGroups: () => {},
   grupsUser: {},
+  getGroupExpenses: () => {},
+  groupExpenses: {},
+  totalExpenses: 0,
+  averageExpense: 0,
+  userDetails: {},
+  message: [],
 });
 
 export const useGroups = () => {
@@ -17,6 +23,11 @@ export const useGroups = () => {
 
 export const GroupsProvider = ({ children }: any) => {
   const [grupsUser, setGroupsUser] = useState<object | null>(null);
+  const [groupExpenses, setGroupExpenses] = useState<object | null>(null);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
+  const [averageExpense, setAverageExpense] = useState<number>(0);
+  const [userDetails, setUserDetails] = useState<object | null>(null);
+  const [message, setMessage] = useState([]);
 
   const getGroups = async (userId: string) => {
     const res = await getGroupsRequest(userId);
@@ -25,9 +36,26 @@ export const GroupsProvider = ({ children }: any) => {
     }
   };
 
+  const getGroupExpenses = async (groupId: string) => {
+    const res = await getGroupExpensesRequest(groupId);
+    if (!res.error) {
+      setGroupExpenses(res.expenses);
+      setTotalExpenses(res.totalExpenses);
+      setAverageExpense(res.averageExpense);
+      setUserDetails(res.userDetails);
+      setMessage(res.message);
+    }
+  };
+
   const contextValue = {
     getGroups,
     grupsUser,
+    getGroupExpenses,
+    groupExpenses,
+    totalExpenses,
+    averageExpense,
+    userDetails,
+    message,
   };
 
   return (

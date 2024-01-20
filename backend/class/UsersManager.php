@@ -118,7 +118,7 @@ class UsersManager
   }
 
   // Unregistered users
-  public function addUnregisteredUserToGroup($creatorUserId, $name)
+  public function addUnregisteredUser($creatorUserId, $name)
   {
     try {
       $stmt = $this->conn->prepare("INSERT INTO Users (id_user, name, is_registered, creator_user_id) VALUES (:id_user, :name, false, :creatorUserId)");
@@ -134,6 +134,7 @@ class UsersManager
       return ['error' => 'Failed to create unregistered user', 'status' => 500];
     }
   }
+
 
 
 

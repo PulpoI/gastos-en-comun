@@ -96,6 +96,46 @@ class GroupsManager
     }
   }
 
+  public function addUnregisteredUserToGroup($userId, $groupId, $creatorUserId)
+  {
+    try {
+      // Verify that the user is the administrator of the group
+      $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :creatorUserId AND group_id = :groupId");
+      $stmt->bindParam(':creatorUserId', $creatorUserId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      if ($stmt->rowCount() === 0) {
+        http_response_code(403); // Forbidden
+        return ['error' => 'User does not have permission to add others to the group', 'status' => 403];
+      }
+
+      // Verify that the user is not already in the group
+      $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      if ($stmt->rowCount() > 0) {
+        http_response_code(409); // Conflict
+        return ['error' => 'User is already in the group', 'status' => 409];
+      }
+
+      // Insert user into UserGroups
+      $stmt = $this->conn->prepare("INSERT INTO UserGroups (id_user_group, user_id, group_id) VALUES (:idUserGroup, :userId, :groupId)");
+      $uniqueId = uniqid();
+      $stmt->bindParam(':idUserGroup', $uniqueId);
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      http_response_code(201); // Created
+      return ['message' => 'User added to group successfully', 'status' => 201];
+    } catch (PDOException $e) {
+      http_response_code(500); // Internal Server Error
+      return ['error' => 'Failed to add user to group', 'status' => 500];
+    }
+  }
   public function verifyGroupPassword($groupId, $enteredPassword)
   {
     try {
@@ -132,6 +172,21 @@ class GroupsManager
       $stmt->execute();
 
       $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      // get group users
+      foreach ($groups as $key => $group) {
+        $groupUsers = $this->getGroupUsers($group['id_group'])['users'];
+        $groups[$key]['users'] = $groupUsers;
+
+
+        foreach ($groupUsers as $user) {
+          if ($user['id_user'] === $group['creator_user_id']) {
+            $groups[$key]['creator_name'] = $user['name'];
+          }
+        }
+      }
+
+
 
       return ['groups' => $groups, 'status' => 200];
     } catch (PDOException $e) {

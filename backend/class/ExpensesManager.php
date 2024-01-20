@@ -177,7 +177,13 @@ class ExpensesManager
         }
       }
 
+      // add name to each expense
+      foreach ($expenses as &$expense) {
+        $expense['name'] = $userDetails[$expense['user_id']]['name'];
+      }
+
       return [
+        'expenses' => $expenses,
         'totalExpenses' => $totalExpenses,
         'averageExpense' => $averageExpense,
         'userDetails' => $userDetails,
