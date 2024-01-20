@@ -127,6 +127,12 @@ class ExpensesManager
       $stmtUsers->execute();
       $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
 
+      // get name of group
+      $stmt = $this->conn->prepare("SELECT name FROM Groups WHERE id_group = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      $groupName = $stmt->fetchColumn();
+
       // 2. Get all expenses in the group
       $stmtExpenses = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId");
       $stmtExpenses->bindParam(':groupId', $groupId);
@@ -139,35 +145,43 @@ class ExpensesManager
       // 4. Calculate the total expenses and the average expense per user
       $totalExpenses = 0;
       foreach ($expenses as $expense) {
-        $totalExpenses += (float) $expense['amount'];
+        if ($expense['is_active']) {
+          $totalExpenses += (float) $expense['amount'];
+        }
       }
       $averageExpense = $totalExpenses / $userCount;
 
       // 5. Get the details of each user
       $userDetails = [];
       foreach ($userIds as $userId) {
-        if (!isset($userDetails[$userId])) {
-          $userDetails[$userId] = [
-            'name' => $this->getUserNameById($userId),
-            'totalExpense' => 0,
-            'amountPaid' => 0,
-            'amountOwed' => 0,
-            'amountToReceive' => 0,
-          ];
-        }
+        $userDetails[] = [
+          'userId' => $userId,
+          'name' => $this->getUserNameById($userId),
+          'totalExpense' => 0,
+          'amountPaid' => 0,
+          'amountOwed' => 0,
+          'amountToReceive' => 0,
+        ];
       }
 
       // 6. Calculate the total expense and amount paid for each user
       foreach ($expenses as $expense) {
-        $userId = $expense['user_id'];
-        $amount = $expense['amount'];
+        if ($expense['is_active']) {
+          $userId = $expense['user_id'];
+          $amount = $expense['amount'];
 
-        $userDetails[$userId]['totalExpense'] += $amount;
-        $userDetails[$userId]['amountPaid'] += $amount;
+          foreach ($userDetails as &$details) {
+            if ($details['userId'] == $userId) {
+              $details['totalExpense'] += $amount;
+              $details['amountPaid'] += $amount;
+              break;
+            }
+          }
+        }
       }
 
       // 7. Identify the users that did not pay anything
-      foreach ($userDetails as $userId => &$details) {
+      foreach ($userDetails as &$details) {
         if ($details['amountPaid'] == 0) {
           $details['amountToReceive'] = 0;
           $details['amountOwed'] = $averageExpense;
@@ -177,13 +191,19 @@ class ExpensesManager
         }
       }
 
+
+
       // add name to each expense
       foreach ($expenses as &$expense) {
-        $expense['name'] = $userDetails[$expense['user_id']]['name'];
+        $expense['name'] = $this->getUserNameById($expense['user_id']);
       }
+
+
+
 
       return [
         'expenses' => $expenses,
+        'groupName' => $groupName,
         'totalExpenses' => $totalExpenses,
         'averageExpense' => $averageExpense,
         'userDetails' => $userDetails,

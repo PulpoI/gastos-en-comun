@@ -3,10 +3,12 @@ import { getGroupExpensesRequest, getGroupsRequest } from "../services/groups";
 import { useAuth } from "./AuthContext";
 
 export const GroupsContext = createContext({
+  loading: false,
   getGroups: () => {},
   grupsUser: {},
   getGroupExpenses: () => {},
   groupExpenses: {},
+  groupName: "",
   totalExpenses: 0,
   averageExpense: 0,
   userDetails: {},
@@ -22,21 +24,26 @@ export const useGroups = () => {
 };
 
 export const GroupsProvider = ({ children }: any) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [grupsUser, setGroupsUser] = useState<object | null>(null);
   const [groupExpenses, setGroupExpenses] = useState<object | null>(null);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [averageExpense, setAverageExpense] = useState<number>(0);
   const [userDetails, setUserDetails] = useState<object | null>(null);
   const [message, setMessage] = useState([]);
+  const [groupName, setGroupName] = useState<string>("");
 
   const getGroups = async (userId: string) => {
+    setLoading(true);
     const res = await getGroupsRequest(userId);
     if (!res.error) {
       setGroupsUser(res.groups);
+      setLoading(false);
     }
   };
 
   const getGroupExpenses = async (groupId: string) => {
+    setLoading(true);
     const res = await getGroupExpensesRequest(groupId);
     if (!res.error) {
       setGroupExpenses(res.expenses);
@@ -44,14 +51,18 @@ export const GroupsProvider = ({ children }: any) => {
       setAverageExpense(res.averageExpense);
       setUserDetails(res.userDetails);
       setMessage(res.message);
+      setGroupName(res.groupName);
+      setLoading(false);
     }
   };
 
   const contextValue = {
+    loading,
     getGroups,
     grupsUser,
     getGroupExpenses,
     groupExpenses,
+    groupName,
     totalExpenses,
     averageExpense,
     userDetails,
