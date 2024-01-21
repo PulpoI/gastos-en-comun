@@ -196,12 +196,12 @@ class ExpensesManager
       // add name to each expense
       foreach ($expenses as &$expense) {
         $expense['name'] = $this->getUserNameById($expense['user_id']);
+        // $expense['creator_name'] = $this->getUserNameCreatorById($expense['creator_user_id']);
       }
 
 
-
-
       return [
+
         'expenses' => $expenses,
         'groupName' => $groupName,
         'totalExpenses' => $totalExpenses,
@@ -224,18 +224,26 @@ class ExpensesManager
     return $stmt->fetchColumn();
   }
 
+  private function getUserNameCreatorById($creatorUserId)
+  {
+    $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :creator_user_id");
+    $stmt->bindParam(':creator_user_id', $creatorUserId);
+    $stmt->execute();
+    return $stmt->fetchColumn();
+  }
+
   // Generate debt operations
-  public function generateDebtOperations($userDetailsExepnses)
+  public function generateDebtOperations($userDetailsExpenses)
   {
     $debtOperations = [];
 
     // Filter users that owe money
-    $debtors = array_filter($userDetailsExepnses, function ($user) {
+    $debtors = array_filter($userDetailsExpenses, function ($user) {
       return $user['amountOwed'] > 0;
     });
 
     // Filter users that are owed money
-    $creditors = array_filter($userDetailsExepnses, function ($user) {
+    $creditors = array_filter($userDetailsExpenses, function ($user) {
       return $user['amountToReceive'] > 0;
     });
 
@@ -254,9 +262,13 @@ class ExpensesManager
         if ($creditorToReceive > 0 && $debtorOwed > 0) {
           $debtAmount = min($debtorOwed, $creditorToReceive);
 
-          // Register the debt operation
-          $operationKey = "operacion_" . count($debtOperations) + 1;
-          $debtOperations[$operationKey] = strtoupper($debtor['name']) . " debe pagarle " . $debtAmount . " a " . $creditor['name'];
+          // Build the debt operation message and add it to the array
+          $debtOperations[] = [
+            'operation' => strtoupper($debtor['name']) . " debe pagarle " . $debtAmount . " a " . strtoupper($creditor['name']),
+            'debtor' => $debtor['name'],
+            'creditor' => $creditor['name'],
+            'amount' => $debtAmount
+          ];
 
           $debtorOwed -= $debtAmount;
           $creditorToReceive -= $debtAmount;
@@ -267,8 +279,10 @@ class ExpensesManager
       }
     }
 
-    return [$debtOperations];
+    // Devolver directamente el array de operaciones
+    return $debtOperations;
   }
+
 
 
 }

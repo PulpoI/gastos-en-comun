@@ -13,6 +13,7 @@ return [
 
   'create_group' => 'api/create_group.php',
   'verify_group_password' => 'api/verify_group_password.php',
+  'get_group' => 'api/get_group.php',
   'get_group_users' => 'api/get_group_users.php',
   'get_group_expenses' => 'api/get_group_expenses.php',
   'get_groups_by_user_id' => 'api/get_groups_by_user_id.php',

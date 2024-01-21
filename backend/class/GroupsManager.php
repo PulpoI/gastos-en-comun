@@ -185,9 +185,6 @@ class GroupsManager
           }
         }
       }
-
-
-
       return ['groups' => $groups, 'status' => 200];
     } catch (PDOException $e) {
       return ['error' => 'Failed to get groups', 'status' => 500];
@@ -197,11 +194,14 @@ class GroupsManager
   public function getGroupUsers($groupId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT Users.id_user, Users.name, Users.email FROM Users INNER JOIN UserGroups ON Users.id_user = UserGroups.user_id WHERE UserGroups.group_id = :groupId");
+      $stmt = $this->conn->prepare("SELECT Users.id_user, Users.name, Users.email, Users.creator_user_id FROM Users INNER JOIN UserGroups ON Users.id_user = UserGroups.user_id WHERE UserGroups.group_id = :groupId");
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
       $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      foreach ($users as $key => $user) {
+        $users[$key]['creator_name'] = $this->getUserNameById($user['creator_user_id']);
+      }
 
       return ['users' => $users, 'status' => 200];
     } catch (PDOException $e) {
@@ -209,6 +209,22 @@ class GroupsManager
     }
   }
 
+  public function getGroup($groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT * FROM Groups WHERE id_group = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      $group = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $users = $this->getGroupUsers($groupId);
+
+      return ['group' => $group, 'users' => $users, 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to get group', 'status' => 500];
+    }
+  }
 
   public function calculateUserBalances($groupId)
   {
@@ -224,6 +240,13 @@ class GroupsManager
   }
 
 
+  private function getUserNameById($userId)
+  {
+    $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :userId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
+    return $stmt->fetchColumn();
+  }
 
 
 }
