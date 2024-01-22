@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Database.php';
+require_once 'GroupsManager.php';
 
 class ExpensesManager
 {
@@ -121,11 +122,18 @@ class ExpensesManager
   public function getGroupExpensesSummary($groupId)
   {
     try {
+
+      $getGroup = new GroupsManager();
+      $group = $getGroup->getGroup($groupId);
+
+      $getGroupUsers = new GroupsManager();
+      $groupUsers = $getGroupUsers->getGroupUsers($groupId);
+
       // 1. Get all users in the group
-      $stmtUsers = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE group_id = :groupId");
-      $stmtUsers->bindParam(':groupId', $groupId);
-      $stmtUsers->execute();
-      $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
+      // $stmtUsers = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE group_id = :groupId");
+      // $stmtUsers->bindParam(':groupId', $groupId);
+      // $stmtUsers->execute();
+      // $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
 
       // get name of group
       $stmt = $this->conn->prepare("SELECT name FROM Groups WHERE id_group = :groupId");
@@ -140,7 +148,7 @@ class ExpensesManager
       $expenses = $stmtExpenses->fetchAll(PDO::FETCH_ASSOC);
 
       // 3. Get the total number of users in the group
-      $userCount = count($userIds);
+      $userCount = count($groupUsers);
 
       // 4. Calculate the total expenses and the average expense per user
       $totalExpenses = 0;
@@ -153,10 +161,11 @@ class ExpensesManager
 
       // 5. Get the details of each user
       $userDetails = [];
-      foreach ($userIds as $userId) {
+      foreach ($groupUsers as $userId) {
         $userDetails[] = [
-          'userId' => $userId,
-          'name' => $this->getUserNameById($userId),
+          'userId' => $userId['id_user'],
+          'name' => $userId['name'],
+          'creator_name' => $this->getUserNameById($userId['creator_user_id']),
           'totalExpense' => 0,
           'amountPaid' => 0,
           'amountOwed' => 0,
@@ -196,12 +205,12 @@ class ExpensesManager
       // add name to each expense
       foreach ($expenses as &$expense) {
         $expense['name'] = $this->getUserNameById($expense['user_id']);
-        // $expense['creator_name'] = $this->getUserNameCreatorById($expense['creator_user_id']);
       }
 
 
       return [
-
+        'users' => $groupUsers,
+        'group' => $group,
         'expenses' => $expenses,
         'groupName' => $groupName,
         'totalExpenses' => $totalExpenses,
@@ -224,7 +233,7 @@ class ExpensesManager
     return $stmt->fetchColumn();
   }
 
-  private function getUserNameCreatorById($creatorUserId)
+  private function getUserNameCreatorById($userId)
   {
     $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :creator_user_id");
     $stmt->bindParam(':creator_user_id', $creatorUserId);

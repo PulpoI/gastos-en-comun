@@ -175,7 +175,7 @@ class GroupsManager
 
       // get group users
       foreach ($groups as $key => $group) {
-        $groupUsers = $this->getGroupUsers($group['id_group'])['users'];
+        $groupUsers = $this->getGroupUsers($group['id_group']);
         $groups[$key]['users'] = $groupUsers;
 
 
@@ -203,7 +203,7 @@ class GroupsManager
         $users[$key]['creator_name'] = $this->getUserNameById($user['creator_user_id']);
       }
 
-      return ['users' => $users, 'status' => 200];
+      return $users;
     } catch (PDOException $e) {
       return ['error' => 'Failed to get group users', 'status' => 500];
     }
@@ -218,9 +218,19 @@ class GroupsManager
 
       $group = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      $users = $this->getGroupUsers($groupId);
+      foreach ($group as $key => $value) {
+        if ($key === 'creator_user_id') {
+          $group['creator_name'] = $this->getUserNameById($value);
+        }
+      }
 
-      return ['group' => $group, 'users' => $users, 'status' => 200];
+      // $users = $this->getGroupUsers($groupId);
+
+      return
+        $group
+        // 'users' => $users,
+        // 'status' => 200
+      ;
     } catch (PDOException $e) {
       return ['error' => 'Failed to get group', 'status' => 500];
     }
