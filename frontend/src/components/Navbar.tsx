@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import iconUser from "../assets/img/avatar.gif";
 import { useAuth } from "../context/AuthContext";
@@ -8,10 +8,17 @@ const Navbar = () => {
   const [isOpenIcon, setIsOpenIcon] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const { logout, checkLogin } = useAuth();
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   function logoutSession() {
     logout();
+    navigate("/login");
   }
 
   return (

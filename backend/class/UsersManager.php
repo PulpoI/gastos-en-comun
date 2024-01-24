@@ -135,7 +135,20 @@ class UsersManager
     }
   }
 
-
+  public function getUsersByCreatorId($creatorUserId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT * FROM Users WHERE creator_user_id = :creatorUserId");
+      $stmt->bindParam(':creatorUserId', $creatorUserId);
+      $stmt->execute();
+      $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      http_response_code(200);
+      return ['users' => $users, 'status' => 200];
+    } catch (PDOException $e) {
+      http_response_code(500);
+      return ['error' => 'Failed to fetch users', 'status' => 500];
+    }
+  }
 
 
 }

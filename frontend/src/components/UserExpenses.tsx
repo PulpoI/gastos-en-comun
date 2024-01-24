@@ -1,48 +1,26 @@
-import React from "react";
+import TotalExpensesTable from "./TotalExpensesTable";
+import Table from "./ui/table/Table";
+import Thead from "./ui/table/Thead";
+import Th from "./ui/table/Th";
+import iconUser from "../assets/img/avatar.gif";
 
-const UserExpenses = ({ userDetails, currencyFormat }) => {
+const UserExpenses = ({
+  userDetails,
+  currencyFormat,
+  totalExpenses,
+  averageExpense,
+}) => {
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {userDetails && userDetails.length ? (
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>Gasto total</span>
-                  </button>
-                </div>
-              </th>
-              <th
-                className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                Usuario
-              </th>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>A pagar</span>
-                  </button>
-                </div>
-              </th>
-
-              <th
-                className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                A recibir
-              </th>
-            </tr>
-          </thead>
-
+        <Table>
+          <Thead>
+            <Th>Gasto total</Th>
+            <Th>Usuario</Th>
+            <Th>A pagar</Th>
+            <Th>A recibir</Th>
+            <Th> </Th>
+          </Thead>
           {/* Data */}
 
           <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
@@ -63,7 +41,7 @@ const UserExpenses = ({ userDetails, currencyFormat }) => {
                       <img
                         alt=""
                         className="object-cover w-8 h-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                        src={iconUser}
                       />
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
@@ -92,10 +70,16 @@ const UserExpenses = ({ userDetails, currencyFormat }) => {
                       ? currencyFormat(user.amountToReceive)
                       : "-"}
                   </td>
+                  <td></td>
                 </tr>
               ))}
           </tbody>
-        </table>
+          <TotalExpensesTable
+            currencyFormat={currencyFormat}
+            totalExpenses={totalExpenses}
+            averageExpense={averageExpense}
+          />
+        </Table>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">

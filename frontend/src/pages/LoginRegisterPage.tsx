@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 
 type Inputs = {
   name: string;

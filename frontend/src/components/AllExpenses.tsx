@@ -1,96 +1,66 @@
-import React from "react";
+import TotalExpensesTable from "./TotalExpensesTable";
+import iconUser from "../assets/img/avatar.gif";
+import Table from "./ui/table/Table";
+import Thead from "./ui/table/Thead";
+import Th from "./ui/table/Th";
+import Tbody from "./ui/table/Tbody";
+import Td from "./ui/table/Td";
 
-const AllExpenses = ({ groupExpenses, currencyFormat }) => {
+const AllExpenses = ({
+  groupExpenses,
+  currencyFormat,
+  setSelectGroup,
+  totalExpenses,
+  averageExpense,
+}) => {
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {groupExpenses && groupExpenses.length ? (
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>Gasto</span>
-                  </button>
-                </div>
-              </th>
-              <th
-                className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                Usuario
-              </th>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>Descripcion</span>
-                  </button>
-                </div>
-              </th>
-
-              <th
-                className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                Fecha
-              </th>
-              <th
-                className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                Estado
-              </th>
-
-              <th className="relative py-3.5 px-4" scope="col">
-                <span className="sr-only">Acciones</span>
-              </th>
-            </tr>
-          </thead>
-
-          {/* Data */}
-
-          <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+        <Table>
+          <Thead>
+            <Th>Gasto</Th>
+            <Th>Usuario</Th>
+            <Th>Descripcion</Th>
+            <Th>Fecha</Th>
+            <Th>Estado</Th>
+          </Thead>
+          <Tbody>
             {groupExpenses &&
               groupExpenses.map((expense: any) => (
                 <tr key={expense.id_expense}>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>{currencyFormat(expense.amount)}</span>
                     </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  </Td>
+                  <Td>
                     <div className="flex items-center gap-x-2">
                       <img
                         alt=""
                         className="object-cover w-8 h-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80"
+                        src={iconUser}
                       />
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
                           {expense.name}
                         </h2>
-                        {/* <p className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                                        {expense.user_id}
-                                      </p> */}
                       </div>
                     </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                  </Td>
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>{expense.description}</span>
                     </div>
-                  </td>
+                  </Td>
 
-                  <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                    {new Date(expense.date).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
+                  <Td>
+                    {new Date(expense.date).toLocaleDateString("es-AR")} {" - "}
+                    {new Date(expense.date).toLocaleTimeString("es-AR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Td>
+                  <Td>
                     {expense.is_active ? (
                       <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
                         <svg
@@ -130,11 +100,18 @@ const AllExpenses = ({ groupExpenses, currencyFormat }) => {
                         <h2 className="text-sm font-normal">Cancelado</h2>
                       </div>
                     )}
-                  </td>
+                  </Td>
                 </tr>
               ))}
-          </tbody>
-        </table>
+          </Tbody>
+
+          {/* Total Expenses */}
+          <TotalExpensesTable
+            currencyFormat={currencyFormat}
+            totalExpenses={totalExpenses}
+            averageExpense={averageExpense}
+          />
+        </Table>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">
@@ -155,17 +132,23 @@ const AllExpenses = ({ groupExpenses, currencyFormat }) => {
               </svg>
             </div>
             <h1 className="mt-3 text-lg text-gray-800 dark:text-white">
-              No vendors found
+              No hay gastos activos
             </h1>
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Your search “Stripe” did not match any vendors. Please try again
-              or create add a new vendor.
+              En esta sección podrás ver todos los gastos que se han realizado.
+              ¡Comienza a agregar los tuyos!
             </p>
             <div className="flex items-center mt-4 sm:mx-auto gap-x-3">
-              <button className="w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
-                Clear Search
+              <button
+                onClick={() => setSelectGroup("userExpenses")}
+                className="w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
+              >
+                Agregar miembro
               </button>
-              <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+              <button
+                onClick={() => setSelectGroup("addExpense")}
+                className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
+              >
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -180,7 +163,7 @@ const AllExpenses = ({ groupExpenses, currencyFormat }) => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span>Add vendor</span>
+                <span>Agregar gasto</span>
               </button>
             </div>
           </div>

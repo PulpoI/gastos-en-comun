@@ -1,47 +1,39 @@
 import React from "react";
+import TotalExpensesTable from "./TotalExpensesTable";
+import Table from "./ui/table/Table";
+import Thead from "./ui/table/Thead";
+import Th from "./ui/table/Th";
+import Tbody from "./ui/table/Tbody";
+import Td from "./ui/table/Td";
 
-const Reckoning = ({ message, currencyFormat }) => {
+const Reckoning = ({
+  message,
+  currencyFormat,
+  totalExpenses,
+  averageExpense,
+  setSelectGroup,
+}) => {
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {message && message.length ? (
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800">
-            <tr>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>Pasos</span>
-                  </button>
-                </div>
-              </th>
-              <th
-                className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                scope="col"
-              >
-                <div className="flex items-center gap-x-3">
-                  <button className="flex items-center gap-x-2">
-                    <span>Operación</span>
-                  </button>
-                </div>
-              </th>
-            </tr>
-          </thead>
-
-          {/* Data */}
-
-          <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+        <Table>
+          <Thead>
+            <Th>Orden</Th>
+            <Th>Detalle</Th>
+            <Th> </Th>
+            <Th> </Th>
+            <Th> </Th>
+          </Thead>
+          <Tbody>
             {message &&
               message.map((msg: any, index: number) => (
                 <tr key={index}>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>{index + 1}</span>
                     </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                  </Td>
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
                         <span className="text-blue-500">{msg.debtor}</span> debe
@@ -52,11 +44,19 @@ const Reckoning = ({ message, currencyFormat }) => {
                         a <span className="text-blue-500">{msg.creditor}</span>{" "}
                       </span>
                     </div>
-                  </td>
+                  </Td>
+                  <Td> </Td>
+                  <Td> </Td>
+                  <Td> </Td>
                 </tr>
               ))}
-          </tbody>
-        </table>
+          </Tbody>
+          <TotalExpensesTable
+            currencyFormat={currencyFormat}
+            totalExpenses={totalExpenses}
+            averageExpense={averageExpense}
+          />
+        </Table>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">
@@ -77,17 +77,19 @@ const Reckoning = ({ message, currencyFormat }) => {
               </svg>
             </div>
             <h1 className="mt-3 text-lg text-gray-800 dark:text-white">
-              No vendors found
+              Aun hay gastos para ajustar
             </h1>
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Your search “Stripe” did not match any vendors. Please try again
-              or create add a new vendor.
+              Agrega todos los gastos para poder ajustar cuentas
             </p>
             <div className="flex items-center mt-4 sm:mx-auto gap-x-3">
               <button className="w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700">
-                Clear Search
+                Agregar miembro
               </button>
-              <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+              <button
+                onClick={() => setSelectGroup("addExpense")}
+                className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
+              >
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -102,7 +104,7 @@ const Reckoning = ({ message, currencyFormat }) => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span>Add vendor</span>
+                <span>Agregar gasto</span>
               </button>
             </div>
           </div>

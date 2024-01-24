@@ -7,6 +7,7 @@ return [
   'add_unregistered_user' => 'api/add_unregistered_user.php',
   'login_user' => 'api/login_user.php',
   'logout_user' => 'api/logout_user.php',
+  'get_users_by_creator_id' => 'api/get_users_by_creator_id.php',
 
   'verify_token' => 'api/verify_token.php',
   'create_token' => 'api/create_token.php',
@@ -17,6 +18,7 @@ return [
   'get_group_users' => 'api/get_group_users.php',
   'get_group_expenses' => 'api/get_group_expenses.php',
   'get_groups_by_user_id' => 'api/get_groups_by_user_id.php',
+  'check_user_in_group' => 'api/check_user_in_group.php',
 
   'add_common_expense' => 'api/add_common_expense.php',
   'update_common_expense' => 'api/update_common_expense.php',

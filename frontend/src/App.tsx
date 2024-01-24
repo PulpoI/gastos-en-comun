@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import LoginRegisterPage from "./pages/LoginRegisterPage";
@@ -32,10 +31,8 @@ function App() {
                 />
 
                 <Route path="/grupo/:groupId" element={<GroupPage />} />
-
                 <Route element={<ProtectedRoute />}>
                   <Route path="/grupos" element={<GroupsExpenses />} />
-                  <Route path="/grupo/:groupId" element={<GroupPage />} />
                 </Route>
               </Routes>
             </main>

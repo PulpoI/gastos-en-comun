@@ -17,7 +17,7 @@ export const AuthContext = createContext({
   isAuthenticated: false,
   user: "",
   checkLogin: () => {},
-  loading: false,
+  loading: true,
 });
 
 export const useAuth = () => {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<object | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   function setCookie(name: string, value: string, expires: number) {
     Cookies.set(name, value, { expires: expires });
@@ -63,18 +63,21 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   async function checkLogin() {
-    setLoading(true);
     const cookies = Cookies.get();
     if (cookies.gc_token && cookies.gc_user) {
-      const res = await verifyTokenRequest(cookies.gc_token, cookies.gc_user);
-      if (!res.error) {
-        setUser(cookies.gc_user);
-        setIsAuthenticated(true);
-        setLoading(false);
-      } else {
-        setErrors(res.error);
-        setLoading(false);
+      try {
+        const res = await verifyTokenRequest(cookies.gc_token, cookies.gc_user);
+        if (!res.error) {
+          setUser(cookies.gc_user);
+          setIsAuthenticated(true);
+        } else {
+          setErrors(res.error);
+        }
+      } catch (error) {
+        setErrors(error.message || "Error inesperado");
+      } finally {
       }
+    } else {
     }
   }
 
@@ -92,9 +95,9 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
 
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  // useEffect(() => {
+  //   checkLogin();
+  // }, []);
 
   const contextValue = {
     signup,

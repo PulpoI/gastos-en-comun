@@ -26,7 +26,7 @@ class ExpensesManager
 
       if ($stmt->rowCount() === 0) {
         http_response_code(403); // Forbidden
-        return ['error' => 'User does not have permission to add expenses to the group', 'status' => 403];
+        return ['error' => 'El usuario no tiene permiso para agregar gastos al grupo.', 'status' => 403];
       }
 
       // Insert the expense
@@ -40,10 +40,10 @@ class ExpensesManager
       $stmt->execute();
 
       http_response_code(201); // Created
-      return ['message' => 'Common expense added successfully', 'status' => 201];
+      return ['message' => 'Gasto común agregado exitosamente', 'status' => 201];
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to add common expense', 'status' => 500];
+      return ['error' => 'No se pudo agregar el gasto común', 'status' => 500];
     }
   }
 
@@ -72,14 +72,14 @@ class ExpensesManager
       $stmt->execute();
 
       if ($stmt->rowCount() > 0) {
-        return ['message' => 'Common expense updated successfully', 'status' => 200];
+        return ['message' => 'Gasto común actualizado con éxito', 'status' => 200];
       } else {
         http_response_code(404); // Not Found
-        return ['error' => 'Expense not found or user does not have permission to update it', 'status' => 404];
+        return ['error' => 'Gasto no encontrado o el usuario no tiene permiso para actualizarlo', 'status' => 404];
       }
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to update common expense', 'status' => 500];
+      return ['error' => 'No se pudo actualizar el gasto común', 'status' => 500];
     }
   }
 
@@ -219,7 +219,7 @@ class ExpensesManager
         'status' => 200
       ];
     } catch (PDOException $e) {
-      return ['error' => 'Failed to retrieve group expenses summary', 'status' => 500];
+      return ['error' => 'No se pudo recuperar el resumen de gastos del grupo', 'status' => 500];
     }
   }
 

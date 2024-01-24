@@ -258,5 +258,24 @@ class GroupsManager
     return $stmt->fetchColumn();
   }
 
+  public function checkUserInGroup($userId, $groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      if ($stmt->rowCount() > 0) {
+        http_response_code(200); // OK
+        return true;
+      } else {
+        http_response_code(200); // Not Found
+        return false;
+      }
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to check if user is in group', 'status' => 500];
+    }
+  }
 
 }

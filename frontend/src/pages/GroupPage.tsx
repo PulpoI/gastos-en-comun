@@ -6,25 +6,34 @@ import { toast } from "react-toastify";
 import AllExpenses from "../components/AllExpenses";
 import UserExpenses from "../components/UserExpenses";
 import Reckoning from "../components/Reckoning";
+import { useAuth } from "../context/AuthContext";
+import AddExpense from "../components/AddExpense";
+import AddMember from "../components/AddMember";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
   const { groupId } = useParams();
+  const { user } = useAuth();
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   const {
-    getGroupExpenses,
     groupExpenses,
-    groupName,
+    groupUser,
     userDetails,
     message,
-    loading,
     totalExpenses,
+    averageExpense,
+    postCheckUserInGroup,
+    userWithPermission,
   } = useGroups();
 
   useEffect(() => {
-    getGroupExpenses(groupId);
-    console.log(totalExpenses);
-  }, [groupId]);
+    postCheckUserInGroup(user, groupId);
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }, [groupId, user]);
 
   const currencyFormat = (value) =>
     new Intl.NumberFormat("es-AR", {
@@ -37,18 +46,22 @@ const GroupPage = () => {
     toast.success("Link copiado al portapapeles");
   }
 
-  if (loading) return <Loading />;
+  if (loading) return <Loading type={"group"} />;
 
   return (
     <>
-      <div>
+      {!userWithPermission && !groupUser.is_public ? (
+        <div>
+          <h1>No tienes permisos para ver este grupo</h1>
+        </div>
+      ) : (
         <section className="container px-4 mx-auto">
           <div>
             <div className="sm:flex sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-x-3">
                   <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-                    {groupName}
+                    {groupUser.name}
                   </h2>
                   {userDetails && userDetails.length && (
                     <button onClick={() => setSelectGroup("userExpenses")}>
@@ -58,9 +71,25 @@ const GroupPage = () => {
                       </span>
                     </button>
                   )}
+                  <a
+                    className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500"
+                    role="button"
+                    tabIndex="0"
+                  >
+                    {groupUser.is_public ? "Publico" : "Privado"}
+                  </a>
                 </div>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
-                  Todos los gastos del grupo "{groupName}""
+                  {selectGroup == "allExpenses" &&
+                    "Todos los gastos de los miembros del grupo."}
+                  {selectGroup == "userExpenses" &&
+                    "Todos los miembros que pertenecen al grupo y sus gastos."}
+                  {selectGroup == "reckoning" &&
+                    "Ajuste de cuentas entre los miembros del grupo."}
+                  {selectGroup == "addExpense" &&
+                    "Agrega un nuevo gasto al grupo."}
+                  {selectGroup == "addMember" &&
+                    "Agrega un nuevo miembro al grupo. Podés invitar a un usuario registrado o crear uno nuevo."}
                 </p>
               </div>
               <div className="flex items-center mt-4 gap-x-3">
@@ -92,7 +121,16 @@ const GroupPage = () => {
                   </svg>
                   <span>Compartir grupo</span>
                 </button>
-                <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                <button
+                  onClick={() => setSelectGroup("addMember")}
+                  className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
+                >
+                  <span>Agregar miembro</span>
+                </button>
+                <button
+                  onClick={() => setSelectGroup("addExpense")}
+                  className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
+                >
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -121,7 +159,7 @@ const GroupPage = () => {
                       : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
                   } `}
                 >
-                  Todos los gastos
+                  Gastos
                 </button>
                 <button
                   onClick={() => setSelectGroup("userExpenses")}
@@ -131,7 +169,7 @@ const GroupPage = () => {
                       : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
                   } `}
                 >
-                  Gastos individuales
+                  Miembros
                 </button>
                 <button
                   onClick={() => setSelectGroup("reckoning")}
@@ -177,25 +215,37 @@ const GroupPage = () => {
                   <AllExpenses
                     groupExpenses={groupExpenses}
                     currencyFormat={currencyFormat}
+                    setSelectGroup={setSelectGroup}
+                    totalExpenses={totalExpenses}
+                    averageExpense={averageExpense}
                   />
                 )}
                 {selectGroup == "userExpenses" && (
                   <UserExpenses
                     userDetails={userDetails}
                     currencyFormat={currencyFormat}
+                    totalExpenses={totalExpenses}
+                    averageExpense={averageExpense}
                   />
                 )}
                 {selectGroup == "reckoning" && (
                   <Reckoning
                     message={message}
                     currencyFormat={currencyFormat}
+                    totalExpenses={totalExpenses}
+                    averageExpense={averageExpense}
+                    setSelectGroup={setSelectGroup}
                   />
                 )}
+                {selectGroup == "addExpense" && (
+                  <AddExpense groupId={groupId} />
+                )}
+                {selectGroup == "addMember" && <AddMember />}
               </div>
             </div>
           </div>
         </section>
-      </div>
+      )}
     </>
   );
 };

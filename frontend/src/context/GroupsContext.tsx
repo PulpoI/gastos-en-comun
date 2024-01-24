@@ -1,9 +1,14 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { getGroupExpensesRequest, getGroupsRequest } from "../services/groups";
-import { useAuth } from "./AuthContext";
+import { createContext, useContext, useState } from "react";
+import {
+  getGroupExpensesRequest,
+  getGroupsRequest,
+  getUsersByCreatorIdRequest,
+  postCheckUserInGroupRequest,
+} from "../services/groups";
 
 export const GroupsContext = createContext({
-  loading: false,
+  loading: true,
+  setLoading: () => {},
   getGroups: () => {},
   grupsUser: {},
   getGroupExpenses: () => {},
@@ -13,6 +18,10 @@ export const GroupsContext = createContext({
   averageExpense: 0,
   userDetails: {},
   message: [],
+  postCheckUserInGroup: () => {},
+  userWithPermission: false,
+  getUsersByCreatorId: () => {},
+  usersByCreatorId: {},
 });
 
 export const useGroups = () => {
@@ -24,26 +33,24 @@ export const useGroups = () => {
 };
 
 export const GroupsProvider = ({ children }: any) => {
-  const [loading, setLoading] = useState<boolean>(false);
   const [grupsUser, setGroupsUser] = useState<object | null>(null);
   const [groupExpenses, setGroupExpenses] = useState<object | null>(null);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [averageExpense, setAverageExpense] = useState<number>(0);
   const [userDetails, setUserDetails] = useState<object | null>(null);
   const [message, setMessage] = useState([]);
-  const [groupName, setGroupName] = useState<string>("");
+  const [groupUser, setGroupUser] = useState<string>("");
+  const [userWithPermission, setUserWithPermission] = useState<boolean>(false);
+  const [usersByCreatorId, setUsersByCreatorId] = useState<object | null>(null);
 
   const getGroups = async (userId: string) => {
-    setLoading(true);
     const res = await getGroupsRequest(userId);
     if (!res.error) {
       setGroupsUser(res.groups);
-      setLoading(false);
     }
   };
 
   const getGroupExpenses = async (groupId: string) => {
-    setLoading(true);
     const res = await getGroupExpensesRequest(groupId);
     if (!res.error) {
       setGroupExpenses(res.expenses);
@@ -51,22 +58,42 @@ export const GroupsProvider = ({ children }: any) => {
       setAverageExpense(res.averageExpense);
       setUserDetails(res.userDetails);
       setMessage(res.message);
-      setGroupName(res.groupName);
-      setLoading(false);
+      setGroupUser(res.group);
+    }
+  };
+
+  const postCheckUserInGroup = async (userId: string, groupId: string) => {
+    getGroupExpenses(groupId);
+    const res = await postCheckUserInGroupRequest(userId, groupId);
+    if (!res.error) {
+      setUserWithPermission(res);
+    } else {
+      setUserWithPermission(res);
+    }
+  };
+
+  const getUsersByCreatorId = async (userId: string) => {
+    const res = await getUsersByCreatorIdRequest(userId);
+
+    if (!res.error) {
+      setUsersByCreatorId(res.users);
     }
   };
 
   const contextValue = {
-    loading,
     getGroups,
     grupsUser,
     getGroupExpenses,
     groupExpenses,
-    groupName,
+    groupUser,
     totalExpenses,
     averageExpense,
     userDetails,
     message,
+    postCheckUserInGroup,
+    userWithPermission,
+    getUsersByCreatorId,
+    usersByCreatorId,
   };
 
   return (
