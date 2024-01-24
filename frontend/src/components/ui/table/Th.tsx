@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 const Th = ({ children }: { children: ReactNode }) => {
   return (
     <th
-      className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 w-1/5"
+      className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400 w-1/6"
       scope="col"
     >
       <div className="flex items-center gap-x-3">

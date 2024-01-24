@@ -5,6 +5,7 @@ import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
+import ModalComponent from "./ui/modal/ModalComponent";
 
 const AllExpenses = ({
   groupExpenses,
@@ -21,8 +22,9 @@ const AllExpenses = ({
             <Th>Gasto</Th>
             <Th>Usuario</Th>
             <Th>Descripcion</Th>
-            <Th>Fecha</Th>
+            <Th>Hora | Fecha</Th>
             <Th>Estado</Th>
+            <Th> </Th>
           </Thead>
           <Tbody>
             {groupExpenses &&
@@ -54,11 +56,12 @@ const AllExpenses = ({
                   </Td>
 
                   <Td>
-                    {new Date(expense.date).toLocaleDateString("es-AR")} {" - "}
                     {new Date(expense.date).toLocaleTimeString("es-AR", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
+                    {" | "}
+                    {new Date(expense.date).toLocaleDateString("es-AR")}
                   </Td>
                   <Td>
                     {expense.is_active ? (
@@ -100,6 +103,30 @@ const AllExpenses = ({
                         <h2 className="text-sm font-normal">Cancelado</h2>
                       </div>
                     )}
+                  </Td>
+                  <Td>
+                    <div className="flex items-center gap-x-6">
+                      <ModalComponent
+                        expense={expense}
+                        setSelectGroup={setSelectGroup}
+                      />
+                      <button className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </Td>
                 </tr>
               ))}

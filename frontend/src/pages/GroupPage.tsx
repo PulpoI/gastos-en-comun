@@ -12,10 +12,10 @@ import AddMember from "../components/AddMember";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
+  const [loading, setLoading] = useState<boolean>(true);
+
   const { groupId } = useParams();
   const { user } = useAuth();
-
-  const [loading, setLoading] = useState<boolean>(true);
 
   const {
     groupExpenses,
@@ -238,7 +238,10 @@ const GroupPage = () => {
                   />
                 )}
                 {selectGroup == "addExpense" && (
-                  <AddExpense groupId={groupId} />
+                  <AddExpense
+                    groupId={groupId}
+                    setSelectGroup={setSelectGroup}
+                  />
                 )}
                 {selectGroup == "addMember" && <AddMember />}
               </div>

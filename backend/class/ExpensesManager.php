@@ -96,7 +96,10 @@ class ExpensesManager
 
       if ($stmt->rowCount() === 0) {
         http_response_code(403); // Forbidden
-        return ['error' => 'User does not have permission to delete expenses in the group', 'status' => 403];
+        return [
+          'error' => 'El usuario no tiene permiso para eliminar gastos en el grupo.',
+          'status' => 403
+        ];
       }
 
       // Delete the expense
@@ -107,14 +110,14 @@ class ExpensesManager
       $stmt->execute();
 
       if ($stmt->rowCount() > 0) {
-        return ['message' => 'Common expense deleted successfully', 'status' => 200];
+        return ['message' => 'Gasto común eliminado con éxito', 'status' => 200];
       } else {
         http_response_code(404); // Not Found
-        return ['error' => 'Expense not found or user does not have permission to delete it', 'status' => 404];
+        return ['error' => 'Gasto no encontrado o el usuario no tiene permiso para eliminarlo', 'status' => 404];
       }
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to delete common expense', 'status' => 500];
+      return ['error' => 'No se pudo eliminar el gasto común', 'status' => 500];
     }
   }
 

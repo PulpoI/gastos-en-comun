@@ -20,6 +20,7 @@ const UserExpenses = ({
             <Th>A pagar</Th>
             <Th>A recibir</Th>
             <Th> </Th>
+            <Th> </Th>
           </Thead>
           {/* Data */}
 
@@ -70,6 +71,7 @@ const UserExpenses = ({
                       ? currencyFormat(user.amountToReceive)
                       : "-"}
                   </td>
+                  <td></td>
                   <td></td>
                 </tr>
               ))}

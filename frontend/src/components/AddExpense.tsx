@@ -17,7 +17,7 @@ type Inputs = {
   groupId: string;
 };
 
-const AddExpense = ({ groupId }) => {
+const AddExpense = ({ groupId, setSelectGroup }) => {
   const {
     register,
     handleSubmit,
@@ -26,13 +26,16 @@ const AddExpense = ({ groupId }) => {
 
   const { user } = useAuth();
 
-  const { getUsersByCreatorId, usersByCreatorId } = useGroups();
+  const { getUsersByCreatorId, usersByCreatorId, getGroupExpenses } =
+    useGroups();
 
   const onSubmit = handleSubmit(async (values) => {
     !values.userId ? (values.userId = user) : values.userId;
     const res = await postExpenseRequest(values);
     if (!res.error) {
       toast.success(res.message);
+      getGroupExpenses(groupId);
+      setSelectGroup("allExpenses");
     } else {
       toast.error(res.error);
     }

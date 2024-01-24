@@ -1,5 +1,3 @@
-import React from "react";
-
 const TotalExpensesTable = ({
   currencyFormat,
   totalExpenses,
@@ -23,8 +21,9 @@ const TotalExpensesTable = ({
             className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
             scope="col"
           >
-            Division de gastos
+            {totalExpenses != averageExpense ? "Division de gastos" : ""}
           </th>
+          <th></th>
           <th></th>
           <th></th>
           <th></th>
@@ -42,10 +41,15 @@ const TotalExpensesTable = ({
           <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
             <div className="inline-flex items-center gap-x-3">
               <span>
-                {averageExpense != "0" ? currencyFormat(averageExpense) : "-"}
+                {totalExpenses != averageExpense
+                  ? averageExpense != "0"
+                    ? currencyFormat(averageExpense)
+                    : "-"
+                  : ""}
               </span>
             </div>
           </td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
