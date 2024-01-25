@@ -13,50 +13,59 @@ const Reckoning = ({
   averageExpense,
   setSelectGroup,
 }) => {
+  function roundOut(num) {
+    return Math.round(num / 100) * 100;
+  }
+
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {message && message.length ? (
-        <Table>
-          <Thead>
-            <Th>Orden</Th>
-            <Th>Detalle</Th>
-            <Th> </Th>
-            <Th> </Th>
-            <Th> </Th>
-          </Thead>
-          <Tbody>
-            {message &&
-              message.map((msg: any, index: number) => (
-                <tr key={index}>
-                  <Td>
-                    <div className="inline-flex items-center gap-x-3">
-                      <span>{index + 1}</span>
-                    </div>
-                  </Td>
-                  <Td>
-                    <div className="inline-flex items-center gap-x-3">
-                      <span>
-                        <span className="text-blue-500">{msg.debtor}</span> debe
-                        pagarle{" "}
-                        <span className="text-blue-500">
-                          {currencyFormat(msg.amount)}
-                        </span>{" "}
-                        a <span className="text-blue-500">{msg.creditor}</span>{" "}
-                      </span>
-                    </div>
-                  </Td>
-                  <Td> </Td>
-                  <Td> </Td>
-                  <Td> </Td>
-                </tr>
-              ))}
-          </Tbody>
-          <TotalExpensesTable
-            currencyFormat={currencyFormat}
-            totalExpenses={totalExpenses}
-            averageExpense={averageExpense}
-          />
-        </Table>
+        <>
+          <Table>
+            <Thead>
+              <Th>Orden</Th>
+              <Th>Detalle</Th>
+              <Th>Redondeo</Th>
+              <Th> </Th>
+              <Th> </Th>
+              <Th> </Th>
+            </Thead>
+            <Tbody>
+              {message &&
+                message.map((msg: any, index: number) => (
+                  <tr key={index}>
+                    <Td>
+                      <div className="inline-flex items-center gap-x-3">
+                        <span>{index + 1}</span>
+                      </div>
+                    </Td>
+                    <Td>
+                      <div className="inline-flex items-center gap-x-3">
+                        <span>
+                          <span className="text-blue-500">{msg.debtor}</span>{" "}
+                          debe pagarle{" "}
+                          <span className="text-blue-500">
+                            {currencyFormat(msg.amount)}
+                          </span>{" "}
+                          a{" "}
+                          <span className="text-blue-500">{msg.creditor}</span>{" "}
+                        </span>
+                      </div>
+                    </Td>
+                    <Td> {currencyFormat(roundOut(msg.amount))} </Td>
+                    <Td> </Td>
+                    <Td> </Td>
+                    <Td> </Td>
+                  </tr>
+                ))}
+            </Tbody>
+            <TotalExpensesTable
+              currencyFormat={currencyFormat}
+              totalExpenses={totalExpenses}
+              averageExpense={averageExpense}
+            />
+          </Table>
+        </>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">

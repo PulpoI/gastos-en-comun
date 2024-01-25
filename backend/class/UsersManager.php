@@ -128,7 +128,7 @@ class UsersManager
       $stmt->bindParam(':creatorUserId', $creatorUserId);
       $stmt->execute();
       http_response_code(201);
-      return ['message' => 'Unregistered user created successfully', 'status' => 201];
+      return ['message' => 'Unregistered user created successfully', 'status' => 201, 'id_user' => $generatedId];
     } catch (PDOException $e) {
       http_response_code(500);
       return ['error' => 'Failed to create unregistered user', 'status' => 500];

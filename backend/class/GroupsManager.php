@@ -53,7 +53,7 @@ class GroupsManager
 
       if ($stmt->rowCount() === 0) {
         http_response_code(403); // Forbidden
-        return ['error' => 'User does not have permission to add others to the group', 'status' => 403];
+        return ['error' => 'El usuario no tiene permiso para agregar miembros al grupo', 'status' => 403];
       }
 
       // Verify that the user is not already in the group
@@ -64,7 +64,7 @@ class GroupsManager
 
       if ($stmt->rowCount() > 0) {
         http_response_code(409); // Conflict
-        return ['error' => 'User is already in the group', 'status' => 409];
+        return ['error' => 'La usuario ya está en el grupo', 'status' => 409];
       }
 
       // Obtener el ID del usuario que se va a agregar al grupo
@@ -85,14 +85,14 @@ class GroupsManager
         $stmt->execute();
 
         http_response_code(201); // Created
-        return ['message' => 'User added to group successfully', 'status' => 201];
+        return ['message' => 'Usuario agregado al grupo exitosamente', 'status' => 201];
       } else {
         http_response_code(404); // Not Found
-        return ['error' => 'User not found', 'status' => 404];
+        return ['error' => 'Usuario no encontrado', 'status' => 404];
       }
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to add user to group', 'status' => 500];
+      return ['error' => 'No se pudo agregar el usuario al grupo', 'status' => 500];
     }
   }
 
@@ -107,7 +107,7 @@ class GroupsManager
 
       if ($stmt->rowCount() === 0) {
         http_response_code(403); // Forbidden
-        return ['error' => 'User does not have permission to add others to the group', 'status' => 403];
+        return ['error' => 'El usuario no tiene permiso para agregar miembros al grupo', 'status' => 403];
       }
 
       // Verify that the user is not already in the group
@@ -118,7 +118,7 @@ class GroupsManager
 
       if ($stmt->rowCount() > 0) {
         http_response_code(409); // Conflict
-        return ['error' => 'User is already in the group', 'status' => 409];
+        return ['error' => 'El usuario ya está en el grupo', 'status' => 409];
       }
 
       // Insert user into UserGroups
@@ -130,10 +130,10 @@ class GroupsManager
       $stmt->execute();
 
       http_response_code(201); // Created
-      return ['message' => 'User added to group successfully', 'status' => 201];
+      return ['message' => 'Usuario agregado al grupo exitosamente', 'status' => 201];
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to add user to group', 'status' => 500];
+      return ['error' => 'No se pudo agregar el usuario al grupo', 'status' => 500];
     }
   }
   public function verifyGroupPassword($groupId, $enteredPassword)
@@ -149,18 +149,18 @@ class GroupsManager
         $storedPassword = $groupData['password'];
         // Virify entered password
         if (password_verify($enteredPassword, $storedPassword)) {
-          return ['message' => 'Password verification successful', 'status' => 200];
+          return ['message' => 'Verificación de contraseña exitosa', 'status' => 200];
         } else {
           http_response_code(401); // Unauthorized
-          return ['error' => 'Incorrect group password', 'status' => 401];
+          return ['error' => 'Contraseña de grupo incorrecta', 'status' => 401];
         }
       } else {
         http_response_code(404); // Not Found
-        return ['error' => 'Group not found', 'status' => 404];
+        return ['error' => 'Grupo no encontrado', 'status' => 404];
       }
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to verify group password', 'status' => 500];
+      return ['error' => 'No se pudo verificar la contraseña del grupo', 'status' => 500];
     }
   }
 

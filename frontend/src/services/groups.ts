@@ -48,3 +48,42 @@ export const getUsersByCreatorIdRequest = async (creatorId: string) => {
     throw new Error("Failed to fetch data");
   }
 }
+
+export const postUserRegisteredInGroupRequest = async (values: object) => {
+  try {
+    const response = fetch(API + "add_user_to_group", {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}
+
+export const postUserUnregisteredInGroupRequest = async (values: object) => {
+  try {
+    const response = fetch(API + "add_unregistered_user_to_group", {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}
+
+export const postUnregisteredUserRequest = async (values: object) => {
+  try {
+    const response = fetch(API + "add_unregistered_user", {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}

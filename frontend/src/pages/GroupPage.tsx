@@ -243,7 +243,12 @@ const GroupPage = () => {
                     setSelectGroup={setSelectGroup}
                   />
                 )}
-                {selectGroup == "addMember" && <AddMember />}
+                {selectGroup == "addMember" && (
+                  <AddMember
+                    groupId={groupId}
+                    setSelectGroup={setSelectGroup}
+                  />
+                )}
               </div>
             </div>
           </div>

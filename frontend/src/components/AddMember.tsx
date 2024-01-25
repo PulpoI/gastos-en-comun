@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "./ui/table/Table";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
@@ -7,35 +7,75 @@ import Thead from "./ui/table/Thead";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthContext";
 import { useGroups } from "../context/GroupsContext";
-import { postExpenseRequest } from "../services/expenses";
 import { toast } from "react-toastify";
+import {
+  postUnregisteredUserRequest,
+  postUserRegisteredInGroupRequest,
+  postUserUnregisteredInGroupRequest,
+} from "../services/groups";
 
-type Inputs = {
-  amount: number;
-  userId: string;
-  description: string;
-  groupId: string;
-};
+const AddMember = ({ groupId, setSelectGroup }) => {
+  const [userType, setUserType] = useState("newUser");
+  const [isRegistered, setIsRegistered] = useState(false);
 
-const AddMember = ({ groupId }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm();
 
   const { user } = useAuth();
-
-  const { getUsersByCreatorId, usersByCreatorId } = useGroups();
+  const { getUsersByCreatorId, usersByCreatorId, getGroupExpenses } =
+    useGroups();
 
   const onSubmit = handleSubmit(async (values) => {
-    !values.userId ? (values.userId = user) : values.userId;
-    const res = await postExpenseRequest(values);
-    if (!res.error) {
-      toast.success(res.message);
-    } else {
-      toast.error(res.error);
+    let data = {
+      adminUserId: user,
+      groupId: groupId,
+      userEmail: "",
+      creatorUserId: user,
+      name: "",
+      userId: "",
+    };
+    if (userType == "newUser" && values.typeUser == "registered") {
+      data.userEmail = values.email;
+      const res = await postUserRegisteredInGroupRequest(data);
+      if (!res.error) {
+        toast.success(res.message);
+        getGroupExpenses(groupId);
+        setSelectGroup("userExpenses");
+      } else {
+        toast.error(res.error);
+      }
     }
+    if (userType == "newUser" && values.typeUser == "unregistered") {
+      // data.creatorUserId = user;
+      data.name = values.name;
+      const res = await postUnregisteredUserRequest(data);
+      if (!res.error) {
+        data.userId = res.id_user;
+        const res2 = await postUserUnregisteredInGroupRequest(data);
+        if (!res2.error) {
+          toast.success(res2.message);
+          getGroupExpenses(groupId);
+          setSelectGroup("userExpenses");
+        } else {
+          toast.error(res2.error);
+        }
+      }
+    }
+    if (userType !== "newUser") {
+      data.userId = userType;
+      const res = await postUserUnregisteredInGroupRequest(data);
+      if (!res.error) {
+        toast.success(res.message);
+        getGroupExpenses(groupId);
+        setSelectGroup("userExpenses");
+      } else {
+        toast.error(res.error);
+      }
+    }
+    // const res = await postUserRegisteredInGroupRequest(values);
   });
 
   useEffect(() => {
@@ -48,8 +88,18 @@ const AddMember = ({ groupId }) => {
         <Table>
           <Thead>
             <Th>Usuario</Th>
-            <Th>Tipo</Th>
-            <Th>Nombre / Email</Th>
+            {userType == "newUser" ? (
+              <>
+                <Th>Tipo</Th>
+                {isRegistered ? <Th>Email</Th> : <Th>Nombre</Th>}
+              </>
+            ) : (
+              <>
+                <Th> </Th>
+                <Th> </Th>
+              </>
+            )}
+
             <Th> </Th>
             <Th> </Th>
           </Thead>
@@ -58,11 +108,11 @@ const AddMember = ({ groupId }) => {
               <Td>
                 <div className="pb-2">
                   <select
-                    {...register("userId")}
-                    className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                    defaultValue={user}
+                    onChange={(e) => setUserType(e.target.value)}
+                    value={userType}
+                    className="block mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   >
-                    <option value="">Agregar nuevo</option>
+                    <option value="newUser">Nuevo miembro</option>
                     {usersByCreatorId?.map(
                       (u: any) =>
                         u.id_user !== user && (
@@ -75,59 +125,76 @@ const AddMember = ({ groupId }) => {
                 </div>
               </Td>
               <Td>
-                <div className="pb-2">
-                  <label htmlFor="registered">Registrado</label>
-                  <input
-                    {...register("typeUser", {
-                      required: "Ingresá el monto",
-                    })}
-                    className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                    type="radio"
-                    name="typeUser"
-                    value="registered"
-                  />
-                  <label htmlFor="unregistered">No registrado</label>
-                  <input
-                    {...register("typeUser", {
-                      required: "Ingresá el monto",
-                    })}
-                    className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                    type="radio"
-                    name="typeUser"
-                    value="unregistered"
-                  />
-                </div>
+                {userType == "newUser" ? (
+                  <div>
+                    <div className="flex justify-between pb-2">
+                      <label htmlFor="registered">Registrado</label>
+                      <input
+                        {...register("typeUser", {
+                          required: "Ingresá el monto",
+                        })}
+                        className="block mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+                        type="radio"
+                        name="typeUser"
+                        value="registered"
+                        onChange={() => setIsRegistered(true)}
+                      />
+                    </div>
+                    <div className="flex justify-between">
+                      <label htmlFor="unregistered">No registrado</label>
+                      <input
+                        {...register("typeUser", {
+                          required: "Ingresá el monto",
+                        })}
+                        className="block  mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+                        type="radio"
+                        name="typeUser"
+                        value="unregistered"
+                        onChange={() => setIsRegistered(false)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
               </Td>
-
+              {userType == "newUser" ? (
+                <Td>
+                  <div className="pb-2">
+                    {isRegistered ? (
+                      <input
+                        {...register("email", {
+                          required: "Ingresá un email",
+                        })}
+                        className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+                        placeholder="Email"
+                        type="email"
+                      />
+                    ) : (
+                      <input
+                        {...register("name", {
+                          required: "Ingresá un nombre",
+                        })}
+                        className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+                        placeholder="Nombre"
+                        type="text"
+                        maxLength={40}
+                      />
+                    )}
+                  </div>
+                </Td>
+              ) : (
+                <Td> </Td>
+              )}
               <Td>
-                <div className="pb-2">
-                  <input
-                    {...register("description", {
-                      required: "Ingresá una descripción",
-                    })}
-                    className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                    placeholder=""
-                    type="text"
-                    maxLength={40}
-                  />
-                  {errors.description && (
-                    <span
-                      role="alert"
-                      className="absolute text-xs text-red-500"
-                    >
-                      {errors.description.message}
-                    </span>
-                  )}
-                </div>
-              </Td>
-              <Td>
-                <input
+                {/* <input
                   hidden
                   {...register("groupId", { required: true })}
                   value={groupId}
                   type="text"
-                />
+                /> */}
               </Td>
+
               <Td>
                 <button>Agregar miembro</button>
               </Td>
