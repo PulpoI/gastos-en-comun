@@ -37,6 +37,7 @@ const AddMember = ({ groupId, setSelectGroup }) => {
       name: "",
       userId: "",
     };
+
     if (userType == "newUser" && values.typeUser == "registered") {
       data.userEmail = values.email;
       const res = await postUserRegisteredInGroupRequest(data);

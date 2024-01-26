@@ -35,10 +35,10 @@ class GroupsManager
       $stmt->execute();
 
       http_response_code(201); // Created
-      return ['message' => 'Group created successfully', 'status' => 201];
+      return ['message' => 'Grupo creado exitosamente', 'status' => 201, 'groupId' => $uniqueIdGroup];
     } catch (PDOException $e) {
       http_response_code(500); // Internal Server Error
-      return ['error' => 'Failed to create group', 'status' => 500];
+      return ['error' => 'No se pudo crear el grupo', 'status' => 500];
     }
   }
 

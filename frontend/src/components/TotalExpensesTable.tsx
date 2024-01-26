@@ -21,7 +21,7 @@ const TotalExpensesTable = ({
             className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
             scope="col"
           >
-            {totalExpenses != averageExpense ? "Division de gastos" : ""}
+            {totalExpenses != averageExpense ? "División de gastos" : ""}
           </th>
           <th></th>
           <th></th>

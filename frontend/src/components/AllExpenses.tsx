@@ -23,8 +23,9 @@ const AllExpenses = ({
             <Th>Gasto</Th>
             <Th>Usuario</Th>
             <Th>Descripcion</Th>
-            <Th>Hora | Fecha</Th>
-            <Th>Estado</Th>
+            <Th>Fecha</Th>
+            {/* <Th>Estado</Th> */}
+            <Th> </Th>
             <Th> </Th>
           </Thead>
           <Tbody>
@@ -61,14 +62,17 @@ const AllExpenses = ({
                   </Td>
 
                   <Td>
-                    {new Date(expense.date).toLocaleTimeString("es-AR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                    {" | "}
-                    {new Date(expense.date).toLocaleDateString("es-AR")}
+                    <span className="font-normal">
+                      {new Date(expense.date).toLocaleTimeString("es-AR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      {" - "}
+                      {new Date(expense.date).toLocaleDateString("es-AR")}
+                    </span>
                   </Td>
-                  <Td>
+
+                  {/* <Td>
                     {expense.is_active ? (
                       <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
                         <svg
@@ -108,7 +112,7 @@ const AllExpenses = ({
                         <h2 className="text-sm font-normal">Cancelado</h2>
                       </div>
                     )}
-                  </Td>
+                  </Td> */}
                   <Td>
                     <div className="flex items-center gap-x-6">
                       <ModalComponent
@@ -134,6 +138,7 @@ const AllExpenses = ({
                       </button> */}
                     </div>
                   </Td>
+                  <Td> </Td>
                 </tr>
               ))}
           </Tbody>
@@ -173,7 +178,7 @@ const AllExpenses = ({
             </p>
             <div className="flex items-center mt-4 sm:mx-auto gap-x-3">
               <button
-                onClick={() => setSelectGroup("userExpenses")}
+                onClick={() => setSelectGroup("addMember")}
                 className="w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
               >
                 Agregar miembro

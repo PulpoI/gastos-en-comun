@@ -10,7 +10,7 @@ export const GroupsContext = createContext({
   loading: true,
   setLoading: () => {},
   getGroups: () => {},
-  grupsUser: {},
+  groupsUser: {},
   getGroupExpenses: () => {},
   groupExpenses: {},
   groupName: "",
@@ -33,7 +33,7 @@ export const useGroups = () => {
 };
 
 export const GroupsProvider = ({ children }: any) => {
-  const [grupsUser, setGroupsUser] = useState<object | null>(null);
+  const [groupsUser, setGroupsUser] = useState<object | null>(null);
   const [groupExpenses, setGroupExpenses] = useState<object | null>(null);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
   const [averageExpense, setAverageExpense] = useState<number>(0);
@@ -82,7 +82,7 @@ export const GroupsProvider = ({ children }: any) => {
 
   const contextValue = {
     getGroups,
-    grupsUser,
+    groupsUser,
     getGroupExpenses,
     groupExpenses,
     groupUser,

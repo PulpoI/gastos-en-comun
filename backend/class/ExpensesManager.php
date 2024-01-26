@@ -139,7 +139,7 @@ class ExpensesManager
       $groupName = $stmt->fetchColumn();
 
       // 2. Get all expenses in the group
-      $stmtExpenses = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId");
+      $stmtExpenses = $this->conn->prepare("SELECT * FROM CommonExpenses WHERE group_id = :groupId ORDER BY date DESC");
       $stmtExpenses->bindParam(':groupId', $groupId);
       $stmtExpenses->execute();
       $expenses = $stmtExpenses->fetchAll(PDO::FETCH_ASSOC);

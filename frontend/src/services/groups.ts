@@ -87,3 +87,16 @@ export const postUnregisteredUserRequest = async (values: object) => {
     throw new Error("Failed to fetch data");
   }
 }
+
+export const postGroupRequest = async (values: object) => {
+  try {
+    const response = fetch(API + "create_group", {
+      method: "POST",
+      body: JSON.stringify(values),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+}

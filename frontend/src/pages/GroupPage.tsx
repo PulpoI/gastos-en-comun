@@ -52,7 +52,7 @@ const GroupPage = () => {
     <>
       {!userWithPermission && !groupUser.is_public ? (
         <div>
-          <h1>No tienes permisos para ver este grupo</h1>
+          <h2>No tienes permisos para ver este grupo</h2>
         </div>
       ) : (
         <section className="container px-4 mx-auto">

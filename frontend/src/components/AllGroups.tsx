@@ -1,71 +1,82 @@
-import React from "react";
 import TotalExpensesTable from "./TotalExpensesTable";
+import iconUser from "../assets/img/avatar.gif";
+import iconUserUnregistered from "../assets/img/icon-user.gif";
 import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
+import ModalComponent from "./ui/modal/ModalComponent";
+import { useNavigate } from "react-router-dom";
 
-const Reckoning = ({
-  message,
+const AllGroups = ({
+  groupsUser,
   currencyFormat,
+  setSelectGroup,
   totalExpenses,
   averageExpense,
-  setSelectGroup,
 }) => {
-  function roundOut(num) {
-    return Math.round(num / 100) * 100;
-  }
+  const navigate = useNavigate();
 
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-      {message && message.length ? (
-        <>
-          <Table>
-            <Thead>
-              <Th>Orden</Th>
-              <Th>Detalle</Th>
-              <Th>Redondeo</Th>
-              <Th> </Th>
-              <Th> </Th>
-              <Th> </Th>
-            </Thead>
-            <Tbody>
-              {message &&
-                message.map((msg: any, index: number) => (
-                  <tr key={index}>
-                    <Td>
-                      <div className="inline-flex items-center gap-x-3">
-                        <span>{index + 1}</span>
+      {groupsUser && groupsUser.length ? (
+        <Table>
+          <Thead>
+            <Th>Nombre del grupo</Th>
+            <Th>Fecha de creación</Th>
+            {/* <Th>Estado</Th> */}
+            <Th> Privacidad </Th>
+            <Th> Creado por </Th>
+          </Thead>
+          <Tbody>
+            {groupsUser &&
+              groupsUser.map((group: any) => (
+                <tr
+                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                  key={group.id_group}
+                  onClick={() => navigate("/grupo/" + group.id_group)}
+                >
+                  <Td>
+                    <div className="flex items-center gap-x-2">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {group.name}
+                        </h2>
                       </div>
-                    </Td>
-                    <Td>
-                      <div className="inline-flex items-center gap-x-3">
-                        <span>
-                          <span className="text-blue-500">{msg.debtor}</span>{" "}
-                          <span className="font-normal">debe pagarle </span>
-                          <span className="text-blue-500">
-                            {currencyFormat(msg.amount)}
-                          </span>{" "}
-                          a{" "}
-                          <span className="text-blue-500">{msg.creditor}</span>{" "}
-                        </span>
+                    </div>
+                  </Td>
+                  <Td>
+                    <span className="font-normal">
+                      {new Date(group.date).toLocaleTimeString("es-AR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                      {" - "}
+                      {new Date(group.date).toLocaleDateString("es-AR")}
+                    </span>
+                  </Td>
+                  <Td>
+                    <div className="inline-flex items-center gap-x-3">
+                      <span className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500">
+                        {group.is_public ? "Público" : "Privado"}
+                      </span>
+                    </div>
+                  </Td>
+
+                  <Td>
+                    <div className="flex items-center gap-x-2">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {group.creator_name}
+                        </h2>
                       </div>
-                    </Td>
-                    <Td> {currencyFormat(roundOut(msg.amount))} </Td>
-                    <Td> </Td>
-                    <Td> </Td>
-                    <Td> </Td>
-                  </tr>
-                ))}
-            </Tbody>
-            <TotalExpensesTable
-              currencyFormat={currencyFormat}
-              totalExpenses={totalExpenses}
-              averageExpense={averageExpense}
-            />
-          </Table>
-        </>
+                    </div>
+                  </Td>
+                </tr>
+              ))}
+          </Tbody>
+        </Table>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">
@@ -86,10 +97,11 @@ const Reckoning = ({
               </svg>
             </div>
             <h1 className="mt-3 text-lg text-gray-800 dark:text-white">
-              No hay gastos para ajustar
+              No hay gastos activos
             </h1>
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Agrega nuevos gastos o miembros para ajustar
+              En esta sección podrás ver todos los gastos que se han realizado.
+              ¡Comienza a agregar los tuyos!
             </p>
             <div className="flex items-center mt-4 sm:mx-auto gap-x-3">
               <button
@@ -126,4 +138,4 @@ const Reckoning = ({
   );
 };
 
-export default Reckoning;
+export default AllGroups;
