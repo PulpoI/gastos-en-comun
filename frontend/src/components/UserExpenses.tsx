@@ -3,6 +3,7 @@ import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import iconUser from "../assets/img/avatar.gif";
+import iconUserUnregistered from "../assets/img/icon-user.gif";
 
 const UserExpenses = ({
   userDetails,
@@ -42,7 +43,9 @@ const UserExpenses = ({
                       <img
                         alt=""
                         className="object-cover w-8 h-8 rounded-full"
-                        src={iconUser}
+                        src={
+                          user.is_registered ? iconUser : iconUserUnregistered
+                        }
                       />
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">

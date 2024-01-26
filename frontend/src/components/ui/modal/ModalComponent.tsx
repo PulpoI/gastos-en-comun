@@ -9,7 +9,6 @@ const ModalComponent = ({ expense, setSelectGroup }) => {
   const { getGroupExpenses } = useGroups();
   const openModal = () => {
     setIsOpen(true);
-    console.log(expense);
   };
 
   const closeModal = () => {

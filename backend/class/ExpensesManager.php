@@ -132,12 +132,6 @@ class ExpensesManager
       $getGroupUsers = new GroupsManager();
       $groupUsers = $getGroupUsers->getGroupUsers($groupId);
 
-      // 1. Get all users in the group
-      // $stmtUsers = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE group_id = :groupId");
-      // $stmtUsers->bindParam(':groupId', $groupId);
-      // $stmtUsers->execute();
-      // $userIds = $stmtUsers->fetchAll(PDO::FETCH_COLUMN);
-
       // get name of group
       $stmt = $this->conn->prepare("SELECT name FROM Groups WHERE id_group = :groupId");
       $stmt->bindParam(':groupId', $groupId);
@@ -168,6 +162,7 @@ class ExpensesManager
         $userDetails[] = [
           'userId' => $userId['id_user'],
           'name' => $userId['name'],
+          'is_registered' => $userId['id_user'] != $userId['creator_user_id'] ? 0 : 1,
           'creator_name' => $this->getUserNameById($userId['creator_user_id']),
           'totalExpense' => 0,
           'amountPaid' => 0,
@@ -181,7 +176,6 @@ class ExpensesManager
         if ($expense['is_active']) {
           $userId = $expense['user_id'];
           $amount = $expense['amount'];
-
           foreach ($userDetails as &$details) {
             if ($details['userId'] == $userId) {
               $details['totalExpense'] += $amount;
@@ -203,7 +197,16 @@ class ExpensesManager
         }
       }
 
+      $userRegistrationStatus = [];
+      foreach ($groupUsers as $userId) {
+        $userRegistrationStatus[$userId['id_user']] = $userId['id_user'] != $userId['creator_user_id'] ? 0 : 1;
+      }
 
+      // Bucle donde recorres los gastos (antes de agregar el nombre)
+      foreach ($expenses as &$expense) {
+        $userId = $expense['user_id'];
+        $expense['is_registered'] = isset($userRegistrationStatus[$userId]) ? $userRegistrationStatus[$userId] : 0;
+      }
 
       // add name to each expense
       foreach ($expenses as &$expense) {

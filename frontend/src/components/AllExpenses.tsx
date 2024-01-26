@@ -1,5 +1,6 @@
 import TotalExpensesTable from "./TotalExpensesTable";
 import iconUser from "../assets/img/avatar.gif";
+import iconUserUnregistered from "../assets/img/icon-user.gif";
 import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
@@ -40,7 +41,11 @@ const AllExpenses = ({
                       <img
                         alt=""
                         className="object-cover w-8 h-8 rounded-full"
-                        src={iconUser}
+                        src={
+                          expense.is_registered
+                            ? iconUser
+                            : iconUserUnregistered
+                        }
                       />
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
@@ -110,7 +115,8 @@ const AllExpenses = ({
                         expense={expense}
                         setSelectGroup={setSelectGroup}
                       />
-                      <button className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none">
+                      {/* Buton EDITAR */}
+                      {/* <button className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none">
                         <svg
                           className="w-5 h-5"
                           fill="none"
@@ -125,7 +131,7 @@ const AllExpenses = ({
                             strokeLinejoin="round"
                           />
                         </svg>
-                      </button>
+                      </button> */}
                     </div>
                   </Td>
                 </tr>
