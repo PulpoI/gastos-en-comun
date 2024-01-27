@@ -8,9 +8,8 @@ import AllGroups from "../components/AllGroups";
 
 const GroupsExpenses = () => {
   const { user } = useAuth();
-  const { getGroups, groupsUser } = useGroups();
+  const { getGroups, groupsUser, createdGroups } = useGroups();
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectState, setSelectState] = useState<string>("allGroups");
 
   const [selectGroup, setSelectGroup] = useState("allGroups");
 
@@ -22,49 +21,6 @@ const GroupsExpenses = () => {
   }, []);
   if (loading) return <Loading type={"groups"} />;
   return (
-    // <>
-    //   <div className="flex items-center gap-x-3">
-    //     <h1 className="text-lg font-medium text-gray-800 dark:text-white">
-    //       Grupos de gastos
-    //     </h1>
-    //     <p className="max-w-lg mx-auto mt-4 text-gray-500">
-    //       Acá puedes ver todos los grupos de gastos a los que perteneces.
-    //     </p>
-    //   </div>
-    //   <button
-    //     onClick={() => setSelectState("addGroup")}
-    //     className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
-    //   >
-    //     <svg
-    //       className="w-5 h-5"
-    //       fill="none"
-    //       stroke="currentColor"
-    //       strokeWidth="1.5"
-    //       viewBox="0 0 24 24"
-    //       xmlns="http://www.w3.org/2000/svg"
-    //     >
-    //       <path
-    //         d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-    //         strokeLinecap="round"
-    //         strokeLinejoin="round"
-    //       />
-    //     </svg>
-    //     <span>Crear grupo</span>
-    //   </button>
-
-    //   {selectState === "allGroups" &&
-    //     (!groupsUser ? (
-    //       <p>No hay grupos</p>
-    //     ) : (
-    //       <div className="container flex flex-wrap">
-    //         {groupsUser.map((group: any) => (
-    //           <CardGroup group={group} key={group.id_group} />
-    //         ))}
-    //       </div>
-    //     ))}
-    //   {selectState == "addGroup" && <AddGroup />}
-    // </>
-
     <section className="container px-4 mx-auto">
       <div>
         <div className="sm:flex sm:items-center sm:justify-between">
@@ -76,7 +32,8 @@ const GroupsExpenses = () => {
 
               <button onClick={() => setSelectGroup("userExpenses")}>
                 <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-                  {groupsUser.length} grupos
+                  {groupsUser.length}{" "}
+                  {groupsUser.length > 1 ? "grupos" : "grupo"}
                 </span>
               </button>
             </div>
@@ -145,7 +102,16 @@ const GroupsExpenses = () => {
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             {selectGroup == "addGroup" && <AddGroup />}
             {selectGroup == "allGroups" && (
-              <AllGroups groupsUser={groupsUser} />
+              <AllGroups
+                groupsUser={groupsUser}
+                setSelectGroup={setSelectGroup}
+              />
+            )}
+            {selectGroup == "myGroups" && (
+              <AllGroups
+                groupsUser={createdGroups}
+                setSelectGroup={setSelectGroup}
+              />
             )}
           </div>
         </div>

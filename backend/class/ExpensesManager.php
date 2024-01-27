@@ -88,6 +88,7 @@ class ExpensesManager
   public function deleteCommonExpense($expenseId, $userId, $groupId)
   {
     try {
+
       // Verify that the user is a member of the group
       $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
       $stmt->bindParam(':userId', $userId);

@@ -22,6 +22,7 @@ export const GroupsContext = createContext({
   userWithPermission: false,
   getUsersByCreatorId: () => {},
   usersByCreatorId: {},
+  createdGroups: [],
 });
 
 export const useGroups = () => {
@@ -42,11 +43,16 @@ export const GroupsProvider = ({ children }: any) => {
   const [groupUser, setGroupUser] = useState<string>("");
   const [userWithPermission, setUserWithPermission] = useState<boolean>(false);
   const [usersByCreatorId, setUsersByCreatorId] = useState<object | null>(null);
+  const [createdGroups, setCreatedGroups] = useState([]);
 
   const getGroups = async (userId: string) => {
     const res = await getGroupsRequest(userId);
     if (!res.error) {
       setGroupsUser(res.groups);
+      const userCreatedGroups = res.groups.filter(
+        (group) => group.creator_user_id === userId
+      );
+      setCreatedGroups(userCreatedGroups);
     }
   };
 
@@ -94,6 +100,7 @@ export const GroupsProvider = ({ children }: any) => {
     userWithPermission,
     getUsersByCreatorId,
     usersByCreatorId,
+    createdGroups,
   };
 
   return (

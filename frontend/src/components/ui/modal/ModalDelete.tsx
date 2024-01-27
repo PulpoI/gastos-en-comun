@@ -1,12 +1,16 @@
+import { useAuth } from "../../../context/AuthContext";
 import { useGroups } from "../../../context/GroupsContext";
 import { deleteExpenseRequest } from "../../../services/expenses";
+import { deleteGroupRequest } from "../../../services/groups";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const ModalComponent = ({ expense, setSelectGroup }) => {
+const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { getGroupExpenses } = useGroups();
+  const { getGroupExpenses, getGroups } = useGroups();
+  const { user } = useAuth();
+
   const openModal = () => {
     setIsOpen(true);
   };
@@ -16,19 +20,43 @@ const ModalComponent = ({ expense, setSelectGroup }) => {
   };
 
   async function deleteExpense(data: object) {
+    if (expense.user_id == user) {
+      data = {
+        expenseId: expense.id_expense,
+        userId: expense.user_id,
+        groupId: expense.group_id,
+      };
+      let groupId = expense.group_id;
+      const res = await deleteExpenseRequest(data);
+      if (!res.error) {
+        toast.success(res.message);
+        getGroupExpenses(groupId);
+        setSelectGroup("allExpenses");
+      } else {
+        toast.error(res.error);
+      }
+    } else {
+      toast.error("No tienes permisos para eliminar este gasto");
+      setSelectGroup("allExpenses");
+      closeModal();
+    }
+  }
+
+  async function deleteGroup(data: object) {
     data = {
-      expenseId: expense.id_expense,
-      userId: expense.user_id,
-      groupId: expense.group_id,
+      groupId: group.id_group,
+      userId: user,
+      creatorUserId: user,
     };
-    let groupId = expense.group_id;
-    const res = await deleteExpenseRequest(data);
+    const res = await deleteGroupRequest(data);
     if (!res.error) {
       toast.success(res.message);
-      getGroupExpenses(groupId);
-      setSelectGroup("allExpenses");
+      getGroups(user);
+      setSelectGroup("allGroups");
+      closeModal();
     } else {
       toast.error(res.error);
+      closeModal();
     }
   }
 
@@ -90,10 +118,12 @@ const ModalComponent = ({ expense, setSelectGroup }) => {
                     className="text-lg font-medium leading-6 text-gray-800 capitalize dark:text-white"
                     id="modal-title"
                   >
-                    ¿Eliminar gasto?
+                    {expense ? "¿Eliminar gasto?" : "¿Eliminar grupo?"}
                   </h3>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    Una vez eliminado, no podrás recuperar este gasto.
+                    {expense
+                      ? "Una vez eliminado, no podrás recuperar este gasto."
+                      : "Una vez eliminado, no podrás recuperar este grupo."}
                   </p>
                 </div>
               </div>
@@ -104,11 +134,15 @@ const ModalComponent = ({ expense, setSelectGroup }) => {
                     onClick={closeModal}
                     className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-gray-700 capitalize transition-colors duration-300 transform border border-gray-200 rounded-md sm:mt-0 sm:w-auto  dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40"
                   >
-                    Cancel
+                    Cancelar
                   </button>
 
                   <button
-                    onClick={deleteExpense}
+                    onClick={
+                      expense
+                        ? () => deleteExpense(expense)
+                        : () => deleteGroup(group)
+                    }
                     className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
                   >
                     Eliminar
@@ -123,4 +157,4 @@ const ModalComponent = ({ expense, setSelectGroup }) => {
   );
 };
 
-export default ModalComponent;
+export default ModalDelete;

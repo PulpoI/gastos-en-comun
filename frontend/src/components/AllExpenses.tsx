@@ -6,7 +6,7 @@ import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
-import ModalComponent from "./ui/modal/ModalComponent";
+import ModalDelete from "./ui/modal/ModalDelete";
 
 const AllExpenses = ({
   groupExpenses,
@@ -115,7 +115,7 @@ const AllExpenses = ({
                   </Td> */}
                   <Td>
                     <div className="flex items-center gap-x-6">
-                      <ModalComponent
+                      <ModalDelete
                         expense={expense}
                         setSelectGroup={setSelectGroup}
                       />

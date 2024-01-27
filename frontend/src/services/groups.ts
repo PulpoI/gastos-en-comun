@@ -100,3 +100,16 @@ export const postGroupRequest = async (values: object) => {
     throw new Error("Failed to fetch data");
   }
 }
+
+export const deleteGroupRequest = async (group: object) => { 
+  try {
+    const response = fetch(API + "delete_group" , {
+      method: "DELETE",
+      body: JSON.stringify(group),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to delete data");
+  }
+}

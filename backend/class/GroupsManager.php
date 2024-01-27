@@ -167,7 +167,12 @@ class GroupsManager
   public function getGroupsByUserId($userId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT * FROM Groups INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id WHERE UserGroups.user_id = :userId");
+      $stmt = $this->conn->prepare("
+      SELECT Groups.id_group, Groups.creator_user_id, Groups.name, Groups.date, Groups.is_public, Groups.password
+      FROM Groups
+      INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id
+      WHERE UserGroups.user_id = :userId
+      ");
       $stmt->bindParam(':userId', $userId);
       $stmt->execute();
 
@@ -177,13 +182,7 @@ class GroupsManager
       foreach ($groups as $key => $group) {
         $groupUsers = $this->getGroupUsers($group['id_group']);
         $groups[$key]['users'] = $groupUsers;
-
-
-        foreach ($groupUsers as $user) {
-          if ($user['id_user'] === $group['creator_user_id']) {
-            $groups[$key]['creator_name'] = $user['name'];
-          }
-        }
+        $groups[$key]['creator_name'] = $this->getUserNameById($group['creator_user_id']);
       }
       return ['groups' => $groups, 'status' => 200];
     } catch (PDOException $e) {
@@ -275,6 +274,58 @@ class GroupsManager
       }
     } catch (PDOException $e) {
       return ['error' => 'Failed to check if user is in group', 'status' => 500];
+    }
+  }
+
+  public function deleteGroup($groupId, $userId, $creatorUserId)
+  {
+    try {
+
+      // Verify that the user is a member of the group
+      $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      if ($stmt->rowCount() === 0) {
+        http_response_code(403); // Forbidden
+        return [
+          'error' => 'El usuario no tiene permiso para eliminar el grupo.',
+          'status' => 403
+        ];
+      }
+
+      // Verify that the user is the administrator of the group in the table Groups 
+      $stmt = $this->conn->prepare("SELECT creator_user_id FROM Groups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
+      $stmt->bindParam(':creatorUserId', $creatorUserId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      if ($stmt->rowCount() === 0) {
+        http_response_code(403); // Forbidden
+        return [
+          'error' => 'El usuario no tiene permiso para eliminar el grupo. Solo el administrador puede eliminar el grupo.',
+          'status' => 403
+        ];
+      }
+      // first delete all expenses of the group
+      $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      // second delete usergroups of the group
+      $stmt = $this->conn->prepare("DELETE FROM UserGroups WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      // Delete group from UserGroups
+      $stmt = $this->conn->prepare("DELETE FROM Groups WHERE id_group = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      // http_response_code(200); // OK
+      return ['message' => 'Grupo eliminado exitosamente', 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to delete group', 'status' => 500];
     }
   }
 

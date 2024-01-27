@@ -4,8 +4,7 @@ CREATE TABLE Users (
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     is_registered BOOLEAN DEFAULT true,
-    creator_user_id VARCHAR(13),
-    FOREIGN KEY (creator_user_id) REFERENCES Users(id_user)
+    creator_user_id VARCHAR(13)
 );
 
 CREATE TABLE SessionTokens (

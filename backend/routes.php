@@ -19,6 +19,7 @@ return [
   'get_group_expenses' => 'api/get_group_expenses.php',
   'get_groups_by_user_id' => 'api/get_groups_by_user_id.php',
   'check_user_in_group' => 'api/check_user_in_group.php',
+  'delete_group' => 'api/delete_group.php',
 
   'add_common_expense' => 'api/add_common_expense.php',
   'update_common_expense' => 'api/update_common_expense.php',
