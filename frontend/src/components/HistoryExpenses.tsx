@@ -1,71 +1,83 @@
-import React from "react";
-import TotalExpensesTable from "./TotalExpensesTable";
 import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
+import { useGroups } from "../context/GroupsContext";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-const Reckoning = ({
-  message,
-  currencyFormat,
-  totalExpenses,
-  averageExpense,
-  setSelectGroup,
-}) => {
-  function roundOut(num) {
-    return Math.round(num / 100) * 100;
-  }
+const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
+  const { getHistoryExpenses, historyExpenses } = useGroups();
+
+  const { groupId } = useParams();
+
+  useEffect(() => {
+    getHistoryExpenses(groupId);
+  }, []);
 
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-      {message && message.length ? (
-        <>
-          <Table>
-            <Thead>
-              <Th>Orden</Th>
-              <Th>Detalle</Th>
-              <Th> </Th>
-              <Th>Redondeo</Th>
-              <Th> </Th>
-              <Th> </Th>
-            </Thead>
-            <Tbody>
-              {message &&
-                message.map((msg: any, index: number) => (
-                  <tr key={index}>
-                    <Td>
-                      <div className="inline-flex items-center gap-x-3">
-                        <span>{index + 1}</span>
+      {historyExpenses && historyExpenses.length ? (
+        <Table>
+          <Thead>
+            <Th>Fecha</Th>
+            <Th>Gasto total</Th>
+            <Th>Gasto por miembro</Th>
+            <Th>Cantidad de miembros</Th>
+            <Th> </Th>
+            <Th> </Th>
+          </Thead>
+          <Tbody>
+            {historyExpenses &&
+              historyExpenses.map((history: any) => (
+                <tr key={history.id_group_history}>
+                  <Td>
+                    <div className="flex items-center gap-x-2">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {new Date(history.date).toLocaleDateString("es-AR")}
+                          {" - "}
+                          {new Date(history.date).toLocaleTimeString("es-AR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </h2>
                       </div>
-                    </Td>
-                    <Td>
-                      <div className="inline-flex items-center gap-x-3">
-                        <span>
-                          <span className="text-blue-500">{msg.debtor}</span>{" "}
-                          <span className="font-normal">debe pagarle </span>
-                          <span className="text-blue-500">
-                            {currencyFormat(msg.amount)}
-                          </span>{" "}
-                          a{" "}
-                          <span className="text-blue-500">{msg.creditor}</span>{" "}
-                        </span>
+                    </div>
+                  </Td>
+                  <Td>
+                    <div className="inline-flex items-center gap-x-3">
+                      <span>
+                        {currencyFormat(history.json_data.totalExpenses)}
+                      </span>
+                    </div>
+                  </Td>
+                  <Td>
+                    <div className="flex items-center gap-x-6">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {currencyFormat(history.json_data.averageExpense)}
+                        </h2>
                       </div>
-                    </Td>
-                    <Td> </Td>
-                    <Td> {currencyFormat(roundOut(msg.amount))} </Td>
-                    <Td> </Td>
-                    <Td> </Td>
-                  </tr>
-                ))}
-            </Tbody>
-            <TotalExpensesTable
-              currencyFormat={currencyFormat}
-              totalExpenses={totalExpenses}
-              averageExpense={averageExpense}
-            />
-          </Table>
-        </>
+                    </div>
+                  </Td>
+                  <Td>
+                    <div className="flex items-center gap-x-6">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {history.json_data.users.length}
+                        </h2>
+                      </div>
+                    </div>
+                  </Td>
+
+                  <Td> </Td>
+                  <Td> </Td>
+                </tr>
+              ))}
+          </Tbody>
+        </Table>
       ) : (
         <div className="flex items-center text-center border rounded-lg h-96 dark:border-gray-700">
           <div className="flex flex-col w-full max-w-sm px-4 mx-auto">
@@ -86,10 +98,10 @@ const Reckoning = ({
               </svg>
             </div>
             <h1 className="mt-3 text-lg text-gray-800 dark:text-white">
-              No hay gastos para ajustar
+              No hay historial
             </h1>
             <p className="mt-2 text-gray-500 dark:text-gray-400">
-              Agrega nuevos gastos o miembros para ajustar
+              En esta sección podrás ver todos los historiales de gastos.
             </p>
             <div className="flex items-center mt-4 sm:mx-auto gap-x-3">
               <button
@@ -126,4 +138,4 @@ const Reckoning = ({
   );
 };
 
-export default Reckoning;
+export default HistoryExpenses;

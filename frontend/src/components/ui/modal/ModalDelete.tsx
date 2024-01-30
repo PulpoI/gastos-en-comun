@@ -1,15 +1,26 @@
+import { useParams } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { useGroups } from "../../../context/GroupsContext";
 import { deleteExpenseRequest } from "../../../services/expenses";
-import { deleteGroupRequest } from "../../../services/groups";
-import { useState } from "react";
+import {
+  deleteGroupRequest,
+  deleteUserToGroupRequest,
+} from "../../../services/groups";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
+const ModalDelete = ({
+  expense = null,
+  setSelectGroup,
+  group = null,
+  userGroup = null,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { getGroupExpenses, getGroups } = useGroups();
+  const { getGroupExpenses, getGroups, getUsersByCreatorId, usersByCreatorId } =
+    useGroups();
   const { user } = useAuth();
+  const { groupId } = useParams();
 
   const openModal = () => {
     setIsOpen(true);
@@ -19,8 +30,15 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
     setIsOpen(false);
   };
 
+  useEffect(() => {
+    getUsersByCreatorId(user);
+  }, []);
+
   async function deleteExpense(data: object) {
-    if (expense.user_id == user) {
+    const userWithId = usersByCreatorId.find(
+      (u) => u.id_user === expense.user_id
+    );
+    if (userWithId) {
       data = {
         expenseId: expense.id_expense,
         userId: expense.user_id,
@@ -60,6 +78,25 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
     }
   }
 
+  async function deleteUserToGroup(data: object) {
+    data = {
+      groupId: groupId,
+      userId: userGroup.userId,
+      creatorUserId: user,
+    };
+
+    const res = await deleteUserToGroupRequest(data);
+    if (!res.error) {
+      toast.success(res.message);
+      getGroupExpenses(groupId);
+      setSelectGroup("userExpenses");
+      closeModal();
+    } else {
+      toast.error(res.error);
+      closeModal();
+    }
+  }
+
   return (
     <div className="relative flex justify-center">
       <button
@@ -84,7 +121,7 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-10 overflow-y-auto"
+          className="fixed inset-0 z-30 overflow-y-auto"
           aria-labelledby="modal-title"
           role="dialog"
           aria-modal="true"
@@ -92,7 +129,7 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
           {/* ... Modal Content ... */}
           <div className="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             {/* ... Modal Content ... */}
-            <div className="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl rtl:text-right dark:bg-gray-900 sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+            <div className="relative inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl rtl:text-right dark:bg-gray-900 sm:my-16 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
               {/* ... Modal Content ... */}
               <div>
                 {/* ... Modal Content ... */}
@@ -115,15 +152,21 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
 
                 <div className="mt-2 text-center">
                   <h3
-                    className="text-lg font-medium leading-6 text-gray-800 capitalize dark:text-white"
+                    className="text-lg font-medium leading-6 text-gray-800 dark:text-white"
                     id="modal-title"
                   >
-                    {expense ? "¿Eliminar gasto?" : "¿Eliminar grupo?"}
+                    {(expense != null && "¿Eliminar gasto?") ||
+                      (group != null && "¿Eliminar grupo?") ||
+                      (userGroup != null && "¿Eliminar usuario del grupo?")}
+                    {/* {expense ? "¿Eliminar gasto?" : "¿Eliminar grupo?"} */}
                   </h3>
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    {expense
-                      ? "Una vez eliminado, no podrás recuperar este gasto."
-                      : "Una vez eliminado, no podrás recuperar este grupo."}
+                    {(expense != null &&
+                      "Una vez eliminado, no podrás recuperar este gasto.") ||
+                      (group != null &&
+                        "Una vez eliminado, no podrás recuperar este grupo.") ||
+                      (userGroup != null &&
+                        "Se eliminará el usuario y todos sus gastos.")}
                   </p>
                 </div>
               </div>
@@ -138,11 +181,15 @@ const ModalDelete = ({ expense = null, setSelectGroup, group = null }) => {
                   </button>
 
                   <button
-                    onClick={
-                      expense
-                        ? () => deleteExpense(expense)
-                        : () => deleteGroup(group)
-                    }
+                    onClick={() => {
+                      if (expense != null) {
+                        deleteExpense(expense);
+                      } else if (group != null) {
+                        deleteGroup(group);
+                      } else if (userGroup != null) {
+                        deleteUserToGroup(userGroup);
+                      }
+                    }}
                     className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
                   >
                     Eliminar

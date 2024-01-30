@@ -7,6 +7,10 @@ import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
 import ModalDelete from "./ui/modal/ModalDelete";
+import { useGroups } from "../context/GroupsContext";
+import { useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useMediaQuery } from "react-responsive";
 
 const AllExpenses = ({
   groupExpenses,
@@ -15,6 +19,13 @@ const AllExpenses = ({
   totalExpenses,
   averageExpense,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
+  const { getUsersByCreatorId, usersByCreatorId } = useGroups();
+  const { user } = useAuth();
+  useEffect(() => {
+    getUsersByCreatorId(user);
+  }, []);
+
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {groupExpenses && groupExpenses.length ? (
@@ -24,8 +35,7 @@ const AllExpenses = ({
             <Th>Usuario</Th>
             <Th>Descripcion</Th>
             <Th>Fecha</Th>
-            {/* <Th>Estado</Th> */}
-            <Th> </Th>
+            {isMobile ? " " : <Th> </Th>}
             <Th> </Th>
           </Thead>
           <Tbody>
@@ -39,30 +49,35 @@ const AllExpenses = ({
                   </Td>
                   <Td>
                     <div className="flex items-center gap-x-2">
-                      <img
-                        alt=""
-                        className="object-cover w-8 h-8 rounded-full"
-                        src={
-                          expense.is_registered
-                            ? iconUser
-                            : iconUserUnregistered
-                        }
-                      />
+                      {isMobile ? (
+                        " "
+                      ) : (
+                        <img
+                          alt=""
+                          className="object-cover w-8 h-8 rounded-full"
+                          src={
+                            expense.is_registered
+                              ? iconUser
+                              : iconUserUnregistered
+                          }
+                        />
+                      )}
+
                       <div>
-                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                        <h2 className="text-xs md:text-sm font-medium text-gray-800 dark:text-white ">
                           {expense.name}
                         </h2>
                       </div>
                     </div>
                   </Td>
                   <Td>
-                    <div className="inline-flex items-center gap-x-3">
+                    <div className="text-xs md:text-sm inline-flex items-center gap-x-3">
                       <span>{expense.description}</span>
                     </div>
                   </Td>
 
                   <Td>
-                    <span className="font-normal">
+                    <span className="text-xs md:text-sm">
                       {new Date(expense.date).toLocaleTimeString("es-AR", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -71,74 +86,22 @@ const AllExpenses = ({
                       {new Date(expense.date).toLocaleDateString("es-AR")}
                     </span>
                   </Td>
-
-                  {/* <Td>
-                    {expense.is_active ? (
-                      <div className="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60 dark:bg-gray-800">
-                        <svg
-                          fill="none"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          width="12"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M10 3L4.5 8.5L2 6"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                          />
-                        </svg>
-                        <h2 className="text-sm font-normal">Pago</h2>
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center px-3 py-1 text-red-500 rounded-full gap-x-2 bg-red-100/60 dark:bg-gray-800">
-                        <svg
-                          fill="none"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          width="12"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M9 3L3 9M3 3L9 9"
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="1.5"
-                          />
-                        </svg>
-                        <h2 className="text-sm font-normal">Cancelado</h2>
-                      </div>
-                    )}
-                  </Td> */}
                   <Td>
                     <div className="flex items-center gap-x-6">
-                      <ModalDelete
-                        expense={expense}
-                        setSelectGroup={setSelectGroup}
-                      />
-                      {/* Buton EDITAR */}
-                      {/* <button className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button> */}
+                      {usersByCreatorId &&
+                      usersByCreatorId.find(
+                        (u) => u.id_user === expense.user_id
+                      ) ? (
+                        <ModalDelete
+                          expense={expense}
+                          setSelectGroup={setSelectGroup}
+                        />
+                      ) : (
+                        <div> </div>
+                      )}
                     </div>
                   </Td>
-                  <Td> </Td>
+                  {isMobile ? " " : <Th> </Th>}
                 </tr>
               ))}
           </Tbody>

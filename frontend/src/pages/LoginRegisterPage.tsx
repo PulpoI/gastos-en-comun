@@ -26,7 +26,7 @@ const LoginRegisterPage = (type) => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      navigate("/grupos");
     }
   }, [isAuthenticated, navigate]);
 

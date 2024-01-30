@@ -329,4 +329,61 @@ class GroupsManager
     }
   }
 
+  public function deleteUserToGroup($groupId, $userId, $creatorUserId)
+  {
+    try {
+      // Verify that the user is a member of the group
+      $stmt = $this->conn->prepare("SELECT user_id FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      if ($stmt->rowCount() === 0) {
+        http_response_code(403); // Forbidden
+        return [
+          'error' => 'El usuario no existe en el grupo.',
+          'status' => 403
+        ];
+      }
+
+      // Verify that the user is the administrator of the group in the table Groups 
+      $stmt = $this->conn->prepare("SELECT creator_user_id FROM Groups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
+      $stmt->bindParam(':creatorUserId', $creatorUserId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      if ($stmt->rowCount() === 0) {
+        http_response_code(403); // Forbidden
+        return [
+          'error' => 'Solo el administrador puede eliminar a un miembro.',
+          'status' => 403
+        ];
+      }
+
+      // verify that the user admin is not deleting himself
+      if ($userId === $creatorUserId) {
+        http_response_code(403); // Forbidden
+        return [
+          'error' => 'El administrador no puede eliminarse a sí mismo.',
+          'status' => 403
+        ];
+      }
+
+      // first delete all expenses of the group
+      $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE group_id = :groupId AND user_id = :userId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->bindParam(':userId', $userId);
+      $stmt->execute();
+
+      // Delete user from UserGroups
+      $stmt = $this->conn->prepare("DELETE FROM UserGroups WHERE user_id = :userId AND group_id = :groupId");
+      $stmt->bindParam(':userId', $userId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      http_response_code(200); // OK
+      return ['message' => 'Usuario eliminado exitosamente', 'status' => 200];
+    } catch (PDOException $e) {
+      return ['error' => 'Failed to delete user from group', 'status' => 500];
+    }
+  }
 }

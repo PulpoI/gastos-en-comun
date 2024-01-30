@@ -8,9 +8,10 @@ import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
 import Th from "./ui/table/Th";
 import Thead from "./ui/table/Thead";
-import { useGroups } from "../context/GroupsContext";
+import { useMediaQuery } from "react-responsive";
 
 const AddGroup = () => {
+  const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const {
     register,
     handleSubmit,
@@ -21,6 +22,8 @@ const AddGroup = () => {
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(async (values) => {
+    console.log(values);
+
     values.userId = user;
     const res = await postGroupRequest(values);
 
@@ -33,94 +36,24 @@ const AddGroup = () => {
   });
 
   return (
-    // <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
-    //   <h2 className="text-lg font-semibold text-gray-700  dark:text-white">
-    //     Nuevo grupo de gastos
-    //   </h2>
-    //   <form onSubmit={onSubmit}>
-    //     <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-    //       <div>
-    //         <label
-    //           className="text-gray-700 dark:text-gray-200"
-    //           htmlFor="groupname"
-    //         >
-    //           Nombre del grupo
-    //         </label>
-    //         <input
-    //           {...register("name", { required: true })}
-    //           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-    //           id="groupname"
-    //           type="text"
-    //         />
-    //       </div>
-    //       <div>
-    //         <label
-    //           className="text-gray-700 dark:text-gray-200"
-    //           htmlFor="password"
-    //         >
-    //           Contraseña (opcional)
-    //         </label>
-    //         <input
-    //           {...register("password", { required: false })}
-    //           className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-    //           id="password"
-    //           type="password"
-    //         />
-    //       </div>
-    //       <div>
-    //         <div className="flex mb-4">
-    //           <input
-    //             {...register("isPublic", { required: true })}
-    //             className="block mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-    //             type="radio"
-    //             name="isPublic"
-    //             value="false"
-    //           />
-    //           <label
-    //             className="text-gray-700 dark:text-gray-200"
-    //             htmlFor="true"
-    //           >
-    //             Privado: los usuarios añadidos al grupo pueden verlo y agregar
-    //             gastos.
-    //           </label>
-    //         </div>
-    //         <div className="flex">
-    //           <input
-    //             {...register("isPublic", { required: true })}
-    //             className="block mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-    //             type="radio"
-    //             name="isPublic"
-    //             value="true"
-    //             defaultChecked
-    //           />
-    //           <label
-    //             className="text-gray-700 dark:text-gray-200"
-    //             htmlFor="isPublic"
-    //           >
-    //             Público: podés compartir el link del grupo con cualquier persona
-    //           </label>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     <div className="flex justify-end mt-6">
-    //       <button className="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">
-    //         Crear grupo
-    //       </button>
-    //     </div>
-    //   </form>
-    // </section>
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       <form onSubmit={onSubmit}>
         <Table>
           <Thead>
-            <Th>Nombre del grupo</Th>
-            <Th>Tipo</Th>
-            <Th>Contraseña (opcional)</Th>
-            <Th> </Th>
-            <Th> </Th>
+            {isMobile ? (
+              <Th>Nombre, privacidad y contraseña </Th>
+            ) : (
+              <>
+                <Th>Nombre del grupo</Th>
+                <Th>Tipo</Th>
+                <Th>Contraseña (opcional)</Th>
+                <Th> </Th>
+                <Th> </Th>
+              </>
+            )}
           </Thead>
           <Tbody>
-            <tr>
+            <tr className="grid md:table">
               <Td>
                 <div className="pb-2">
                   <input
@@ -128,7 +61,7 @@ const AddGroup = () => {
                       required: "Ingresa un nombre para el grupo",
                     })}
                     className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                    placeholder=""
+                    placeholder="Nombre"
                     type="text"
                     // min={1}
                   />
@@ -154,7 +87,7 @@ const AddGroup = () => {
                       className="block mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                       type="radio"
                       name="isPublic"
-                      value="true"
+                      value="1"
                       defaultChecked
                     />
                   </div>
@@ -167,7 +100,7 @@ const AddGroup = () => {
                       className="block  mr-7 placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                       type="radio"
                       name="isPublic"
-                      value="false"
+                      value="0"
                     />
                   </div>
                 </div>
@@ -178,25 +111,29 @@ const AddGroup = () => {
                     {...register("password", { required: false })}
                     className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                     type="password"
-                  >
-                    {/* {usersByCreatorId?.map((u: any) => (
-                    <option key={u.id_user} value={u.id_user}>
-                      {u.id_user == user ? `${u.name} (Yo)` : u.name}
-                    </option>
-                  ))} */}
-                  </input>
+                    placeholder="Contraseña (opcional)"
+                  ></input>
                 </div>
               </Td>
+              <Td> </Td>
               <Td>
-                {/* <input
-                  hidden
-                  {...register("groupId", { required: true })}
-                  value={groupId}
-                  type="text"
-                /> */}
-              </Td>
-              <Td>
-                <button>Agregar grupo</button>
+                <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Crear grupo</span>
+                </button>
               </Td>
             </tr>
           </Tbody>

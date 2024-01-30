@@ -5,6 +5,7 @@ import {
   getUsersByCreatorIdRequest,
   postCheckUserInGroupRequest,
 } from "../services/groups";
+import { getHistoryExpensesRequest } from "../services/expenses";
 
 export const GroupsContext = createContext({
   loading: true,
@@ -23,6 +24,8 @@ export const GroupsContext = createContext({
   getUsersByCreatorId: () => {},
   usersByCreatorId: {},
   createdGroups: [],
+  getHistoryExpenses: () => {},
+  historyExpenses: [],
 });
 
 export const useGroups = () => {
@@ -44,6 +47,7 @@ export const GroupsProvider = ({ children }: any) => {
   const [userWithPermission, setUserWithPermission] = useState<boolean>(false);
   const [usersByCreatorId, setUsersByCreatorId] = useState<object | null>(null);
   const [createdGroups, setCreatedGroups] = useState([]);
+  const [historyExpenses, setHistoryExpenses] = useState([]);
 
   const getGroups = async (userId: string) => {
     const res = await getGroupsRequest(userId);
@@ -80,9 +84,15 @@ export const GroupsProvider = ({ children }: any) => {
 
   const getUsersByCreatorId = async (userId: string) => {
     const res = await getUsersByCreatorIdRequest(userId);
-
     if (!res.error) {
       setUsersByCreatorId(res.users);
+    }
+  };
+
+  const getHistoryExpenses = async (groupId: string) => {
+    const res = await getHistoryExpensesRequest(groupId);
+    if (!res.error) {
+      setHistoryExpenses(res.historyExpenses);
     }
   };
 
@@ -101,6 +111,8 @@ export const GroupsProvider = ({ children }: any) => {
     getUsersByCreatorId,
     usersByCreatorId,
     createdGroups,
+    getHistoryExpenses,
+    historyExpenses,
   };
 
   return (

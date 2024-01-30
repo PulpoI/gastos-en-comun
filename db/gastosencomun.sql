@@ -45,5 +45,11 @@ CREATE TABLE CommonExpenses (
     FOREIGN KEY (group_id) REFERENCES Groups(id_group)
 );
 
-
-
+CREATE TABLE GroupsHistory (
+    id_group_history VARCHAR(13) PRIMARY KEY,
+    group_id VARCHAR(13),
+    action_description VARCHAR(255) NOT NULL,
+    json_data JSON NOT NULL,
+    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
+);

@@ -1,28 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import iconUser from "../assets/img/avatar.gif";
 import { useAuth } from "../context/AuthContext";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenIcon, setIsOpenIcon] = useState(false);
   const { isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
+  const navRef = useRef();
 
   const { logout, checkLogin } = useAuth();
 
   useEffect(() => {
     checkLogin();
+    document.addEventListener("click", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
   }, []);
+
+  const handleOutsideClick = (event) => {
+    if (
+      !navRef.current.contains(event.target) &&
+      event.target.id !== "btn-icon"
+    ) {
+      setIsOpen(false);
+      setIsOpenIcon(false);
+    }
+  };
 
   function logoutSession() {
     logout();
+    setIsOpenIcon(false);
+    setIsOpen(false);
     navigate("/login");
   }
 
   return (
     <nav
+      ref={navRef}
       className="relative bg-white shadow dark:bg-gray-800"
       data-x-show={`{ isOpen: ${isOpen} }`}
     >
@@ -117,6 +136,7 @@ const Navbar = () => {
                 <div className="relative inline-block">
                   {/* Dropdown toggle button */}
                   <button
+                    id="btn-icon"
                     onClick={() => setIsOpenIcon(!isOpenIcon)}
                     className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none"
                   >
@@ -132,7 +152,7 @@ const Navbar = () => {
                   </button>
 
                   {/* Dropdown menu */}
-                  {isOpenIcon && (
+                  {isOpenIcon === true && (
                     <div
                       onClick={() => setIsOpen(false)}
                       className="absolute right-0 z-20 w-48 py-2 mt-2 origin-top-right bg-white rounded-md shadow-xl dark:bg-gray-800"

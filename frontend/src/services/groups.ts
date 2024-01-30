@@ -49,6 +49,8 @@ export const getUsersByCreatorIdRequest = async (creatorId: string) => {
   }
 }
 
+
+
 export const postUserRegisteredInGroupRequest = async (values: object) => {
   try {
     const response = fetch(API + "add_user_to_group", {
@@ -106,6 +108,19 @@ export const deleteGroupRequest = async (group: object) => {
     const response = fetch(API + "delete_group" , {
       method: "DELETE",
       body: JSON.stringify(group),
+    });
+    const data = (await response).json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to delete data");
+  }
+}
+
+export const deleteUserToGroupRequest = async (values: object) => {
+  try {
+    const response = fetch(API + "delete_user_to_group", {
+      method: "DELETE",
+      body: JSON.stringify(values),
     });
     const data = (await response).json();
     return data;

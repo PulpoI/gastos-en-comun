@@ -230,7 +230,6 @@ class ExpensesManager
     }
   }
 
-
   // Get the name of a user by its id
   private function getUserNameById($userId)
   {
@@ -299,7 +298,59 @@ class ExpensesManager
     return $debtOperations;
   }
 
+  // Post history of expenses
+  public function generateHistoryExpenses($groupId)
+  {
+    $sumaryExpenses = $this->getGroupExpensesSummary($groupId);
+    $message = $this->generateDebtOperations($sumaryExpenses['userDetails']);
+    $sumaryExpenses['message'] = $message;
 
+    if ($sumaryExpenses['status'] == 200) {
+      $stmt = $this->conn->prepare("INSERT INTO GroupsHistory (id_group_history, group_id, action_description, json_data, date) VALUES (:idHistory, :groupId, :actionDescription, :jsonData, NOW())");
+      $uniqueId = uniqid();
+      $stmt->bindParam(':idHistory', $uniqueId);
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->bindParam(':actionDescription', $sumaryExpenses['groupName']);
+      $jsonData = json_encode($sumaryExpenses);
+      $stmt->bindParam(':jsonData', $jsonData);
+      $stmt->execute();
+
+      //then delete all expenses from group 
+      $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE group_id = :groupId");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+
+      http_response_code(201); // Created
+      return ['message' => 'Historial de gastos generado exitosamente', 'status' => 201];
+    } else {
+      http_response_code(500); // Internal Server Error
+      return ['error' => 'No se pudo generar el historial de gastos', 'status' => 500];
+    }
+
+  }
+
+  // Get history of expenses
+  public function getHistoryExpenses($groupId)
+  {
+    try {
+      $stmt = $this->conn->prepare("SELECT * FROM GroupsHistory WHERE group_id = :groupId ORDER BY date DESC");
+      $stmt->bindParam(':groupId', $groupId);
+      $stmt->execute();
+      $historyExpenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      // Recorre cada fila y decodifica el campo json_data
+      foreach ($historyExpenses as &$expense) {
+        $jsonData = $expense['json_data'];
+        $expense['json_data'] = json_decode($jsonData, true);
+      }
+
+      http_response_code(200); // OK
+      return ['historyExpenses' => $historyExpenses, 'status' => 200];
+    } catch (PDOException $e) {
+      http_response_code(500); // Internal Server Error
+      return ['error' => 'No se pudo recuperar el historial de gastos del grupo', 'status' => 500];
+    }
+  }
 
 }
 

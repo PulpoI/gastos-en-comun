@@ -4,13 +4,22 @@ import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
 import iconUser from "../assets/img/avatar.gif";
 import iconUserUnregistered from "../assets/img/icon-user.gif";
+import ModalDelete from "./ui/modal/ModalDelete";
+import Td from "./ui/table/Td";
+import { useAuth } from "../context/AuthContext";
+import Tbody from "./ui/table/Tbody";
+import { useMediaQuery } from "react-responsive";
 
 const UserExpenses = ({
   userDetails,
   currencyFormat,
   totalExpenses,
   averageExpense,
+  setSelectGroup,
+  groupUser,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
+  const { user } = useAuth();
   return (
     <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
       {userDetails && userDetails.length ? (
@@ -20,65 +29,81 @@ const UserExpenses = ({
             <Th>Usuario</Th>
             <Th>A pagar</Th>
             <Th>A recibir</Th>
-            <Th> </Th>
+            {isMobile ? " " : <Th> </Th>}
+
             <Th> </Th>
           </Thead>
-          {/* Data */}
 
-          <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+          <Tbody>
             {userDetails &&
-              userDetails.map((user: any) => (
-                <tr key={user.userId}>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+              userDetails.map((u: any) => (
+                <tr key={u.userId}>
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
-                        {user.totalExpense != "0"
-                          ? currencyFormat(user.totalExpense)
+                        {u.totalExpense != "0"
+                          ? currencyFormat(u.totalExpense)
                           : "-"}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
+                  </Td>
+                  <Td>
                     <div className="flex items-center gap-x-2">
-                      <img
-                        alt=""
-                        className="object-cover w-8 h-8 rounded-full"
-                        src={
-                          user.is_registered ? iconUser : iconUserUnregistered
-                        }
-                      />
+                      {isMobile ? (
+                        " "
+                      ) : (
+                        <img
+                          alt=""
+                          className="object-cover w-8 h-8 rounded-full"
+                          src={
+                            u.is_registered ? iconUser : iconUserUnregistered
+                          }
+                        />
+                      )}
+
                       <div>
-                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
-                          {user.name}
+                        <h2 className="text-xs md:text-sm font-medium text-gray-800 dark:text-white ">
+                          {u.name}
                         </h2>
                         <p className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                          {user.creator_name != user.name
-                            ? `Por: ${user.creator_name}`
-                            : `ID: ${user.userId}`}
+                          {u.creator_name != u.name
+                            ? `Por: ${u.creator_name}`
+                            : `ID: ${u.userId}`}
                         </p>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
+                  </Td>
+                  <Td>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
-                        {user.amountOwed != "0"
-                          ? currencyFormat(user.amountOwed)
+                        {u.amountOwed != "0"
+                          ? currencyFormat(u.amountOwed)
                           : "-"}
                       </span>
                     </div>
-                  </td>
+                  </Td>
 
-                  <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                    {user.amountToReceive != "0"
-                      ? currencyFormat(user.amountToReceive)
+                  <Td>
+                    {u.amountToReceive != "0"
+                      ? currencyFormat(u.amountToReceive)
                       : "-"}
-                  </td>
-                  <td></td>
-                  <td></td>
+                  </Td>
+                  <Td>
+                    <div className="flex items-center gap-x-6">
+                      {groupUser && groupUser.creator_user_id == user ? (
+                        <ModalDelete
+                          userGroup={u}
+                          setSelectGroup={setSelectGroup}
+                        />
+                      ) : (
+                        <div> </div>
+                      )}
+                    </div>
+                  </Td>
+                  {isMobile ? " " : <Th> </Th>}
                 </tr>
               ))}
-          </tbody>
+          </Tbody>
           <TotalExpensesTable
             currencyFormat={currencyFormat}
             totalExpenses={totalExpenses}

@@ -1,6 +1,3 @@
-import TotalExpensesTable from "./TotalExpensesTable";
-import iconUser from "../assets/img/avatar.gif";
-import iconUserUnregistered from "../assets/img/icon-user.gif";
 import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
 import Th from "./ui/table/Th";
@@ -9,14 +6,11 @@ import Td from "./ui/table/Td";
 import ModalDelete from "./ui/modal/ModalDelete";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useMediaQuery } from "react-responsive";
+import { GiWireframeGlobe, GiPadlock } from "react-icons/gi";
 
-const AllGroups = ({
-  groupsUser,
-  currencyFormat,
-  setSelectGroup,
-  totalExpenses,
-  averageExpense,
-}) => {
+const AllGroups = ({ groupsUser, setSelectGroup }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const navigate = useNavigate();
 
   const { user } = useAuth();
@@ -25,11 +19,10 @@ const AllGroups = ({
       {groupsUser && groupsUser.length ? (
         <Table>
           <Thead>
-            <Th>Nombre del grupo</Th>
-            {/* <Th>Estado</Th> */}
-            <Th> Privacidad </Th>
-            <Th> Creado por </Th>
-            <Th>Fecha de creación</Th>
+            <Th>Nombre</Th>
+            <Th>{isMobile ? "Priv." : "Privacidad"}</Th>
+            <Th>{isMobile ? "Admin." : "Administrador"}</Th>
+            {isMobile ? "" : <Th>Fecha de creación</Th>}
             <Th> </Th>
           </Thead>
           <Tbody>
@@ -54,12 +47,11 @@ const AllGroups = ({
                       onClick={() => navigate("/grupo/" + group.id_group)}
                       className="inline-flex items-center gap-x-3"
                     >
-                      <span className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500">
-                        {group.is_public ? "Público" : "Privado"}
+                      <span className="px-3 py-1 text-2xl font-bold text-gray-100 transition-colors duration-300 transform  rounded cursor-pointer hover:bg-gray-500">
+                        {group.is_public ? <GiWireframeGlobe /> : <GiPadlock />}
                       </span>
                     </div>
                   </Td>
-
                   <Td onclick={() => navigate("/grupo/" + group.id_group)}>
                     <div
                       onClick={() => navigate("/grupo/" + group.id_group)}
@@ -74,19 +66,18 @@ const AllGroups = ({
                       </div>
                     </div>
                   </Td>
-                  <Td onclick={() => navigate("/grupo/" + group.id_group)}>
-                    <span
-                      onClick={() => navigate("/grupo/" + group.id_group)}
-                      className="font-normal"
-                    >
-                      {new Date(group.date).toLocaleTimeString("es-AR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                      {" - "}
-                      {new Date(group.date).toLocaleDateString("es-AR")}
-                    </span>
-                  </Td>
+                  {isMobile ? (
+                    " "
+                  ) : (
+                    <Td onclick={() => navigate("/grupo/" + group.id_group)}>
+                      <span
+                        onClick={() => navigate("/grupo/" + group.id_group)}
+                        className="font-normal"
+                      >
+                        {new Date(group.date).toLocaleDateString("es-AR")}
+                      </span>
+                    </Td>
+                  )}
                   <Td onclick={() => setSelectGroup("allGroups")}>
                     <div className="flex items-center gap-x-6">
                       <ModalDelete
@@ -94,23 +85,6 @@ const AllGroups = ({
                         setSelectGroup={setSelectGroup}
                         groupsUser={groupsUser}
                       />
-                      {/* Buton EDITAR */}
-                      {/* <button className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button> */}
                     </div>
                   </Td>
                 </tr>

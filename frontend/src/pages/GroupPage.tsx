@@ -9,6 +9,8 @@ import Reckoning from "../components/Reckoning";
 import { useAuth } from "../context/AuthContext";
 import AddExpense from "../components/AddExpense";
 import AddMember from "../components/AddMember";
+import CloseExpenses from "../components/ui/modal/CloseExpenses";
+import HistoryExpenses from "../components/HistoryExpenses";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
@@ -55,12 +57,12 @@ const GroupPage = () => {
           <h2>No tienes permisos para ver este grupo</h2>
         </div>
       ) : (
-        <section className="container px-4 mx-auto">
+        <section className="container px-4 mx-auto md:mt-10 mt-2">
           <div>
             <div className="sm:flex sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-x-3">
-                  <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+                  <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
                     {groupUser.name}
                   </h2>
                   {userDetails && userDetails.length && (
@@ -79,7 +81,7 @@ const GroupPage = () => {
                     {groupUser.is_public ? "Publico" : "Privado"}
                   </a>
                 </div>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+                <p className="text-sm text-gray-500 dark:text-gray-300 h-11">
                   {selectGroup == "allExpenses" &&
                     "Todos los gastos de los miembros del grupo."}
                   {selectGroup == "userExpenses" &&
@@ -90,12 +92,13 @@ const GroupPage = () => {
                     "Agrega un nuevo gasto al grupo."}
                   {selectGroup == "addMember" &&
                     "Agrega un nuevo miembro al grupo. Podés invitar a un usuario registrado o crear uno nuevo."}
+                  {selectGroup == "history" && "Historial de gastos del grupo"}
                 </p>
               </div>
-              <div className="flex items-center mt-4 gap-x-3">
+              <div className="items-center mt-4 gap-x-3 hidden md:flex">
                 <button
                   onClick={copyGroupShareLink}
-                  className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
+                  className="flex items-center justify-center w-1/2 md:px-5 py-1 md:py-2 text-xs md:text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
                 >
                   <svg
                     fill="none"
@@ -121,39 +124,13 @@ const GroupPage = () => {
                   </svg>
                   <span>Compartir grupo</span>
                 </button>
-                <button
-                  onClick={() => setSelectGroup("addMember")}
-                  className="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
-                >
-                  <span>Agregar miembro</span>
-                </button>
-                <button
-                  onClick={() => setSelectGroup("addExpense")}
-                  className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>Agregar gasto</span>
-                </button>
               </div>
             </div>
-            <div className="mt-6 md:flex md:items-center md:justify-between">
+            <div className="md:mt-6 flex md:items-center justify-between flex-col-reverse md:flex-row">
               <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
                 <button
                   onClick={() => setSelectGroup("allExpenses")}
-                  className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
+                  className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
                     selectGroup == "allExpenses"
                       ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
                       : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
@@ -163,7 +140,7 @@ const GroupPage = () => {
                 </button>
                 <button
                   onClick={() => setSelectGroup("userExpenses")}
-                  className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
+                  className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
                     selectGroup == "userExpenses"
                       ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
                       : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
@@ -173,7 +150,7 @@ const GroupPage = () => {
                 </button>
                 <button
                   onClick={() => setSelectGroup("reckoning")}
-                  className={`px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
+                  className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
                     selectGroup == "reckoning"
                       ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
                       : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
@@ -182,28 +159,68 @@ const GroupPage = () => {
                   Ajuste de cuentas
                 </button>
               </div>
-              <div className="relative flex items-center mt-4 md:mt-0">
-                <span className="absolute">
-                  <svg
-                    className="w-5 h-5 mx-3 text-gray-400 dark:text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+              <div className="relative flex items-center sm:mt-4 md:mt-0">
+                <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+                  <button
+                    onClick={() => setSelectGroup("history")}
+                    className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
+                      selectGroup == "history"
+                        ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
+                        : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+                    } `}
                   >
-                    <path
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-                <input
-                  className="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                  placeholder="Search"
-                  type="text"
-                />
+                    Historial
+                  </button>
+                  <button
+                    onClick={() => setSelectGroup("addMember")}
+                    className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm flex ${
+                      selectGroup == "addMember"
+                        ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
+                        : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+                    } `}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Agregar miembro
+                  </button>
+
+                  <button
+                    onClick={() => setSelectGroup("addExpense")}
+                    className={`w-1/3 px-5 py-1 md:py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm flex ${
+                      selectGroup == "addExpense"
+                        ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
+                        : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+                    } `}
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Agregar gasto
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -226,10 +243,21 @@ const GroupPage = () => {
                     currencyFormat={currencyFormat}
                     totalExpenses={totalExpenses}
                     averageExpense={averageExpense}
+                    setSelectGroup={setSelectGroup}
+                    groupUser={groupUser}
                   />
                 )}
                 {selectGroup == "reckoning" && (
                   <Reckoning
+                    message={message}
+                    currencyFormat={currencyFormat}
+                    totalExpenses={totalExpenses}
+                    averageExpense={averageExpense}
+                    setSelectGroup={setSelectGroup}
+                  />
+                )}
+                {selectGroup == "history" && (
+                  <HistoryExpenses
                     message={message}
                     currencyFormat={currencyFormat}
                     totalExpenses={totalExpenses}
@@ -252,6 +280,7 @@ const GroupPage = () => {
               </div>
             </div>
           </div>
+          {groupExpenses && groupExpenses.length > 0 && <CloseExpenses />}
         </section>
       )}
     </>
