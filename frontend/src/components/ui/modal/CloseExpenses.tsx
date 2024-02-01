@@ -1,8 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
 import { useGroups } from "../../../context/GroupsContext";
 import { postGenerateHistoryExpensesRequest } from "../../../services/expenses";
-import { getGroupExpensesRequest } from "../../../services/groups";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -23,7 +21,7 @@ const CloseExpenses = ({}) => {
 
   useEffect(() => {}, []);
 
-  async function generateHistoryExepnses(groupId) {
+  async function generateHistoryExepnses(groupId: string) {
     const res = await postGenerateHistoryExpensesRequest(groupId);
     if (!res.error) {
       toast.success(res.message);

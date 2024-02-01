@@ -12,13 +12,21 @@ import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useMediaQuery } from "react-responsive";
 
+type AllExpensesProps = {
+  groupExpenses: any;
+  currencyFormat: Function;
+  setSelectGroup: Function;
+  totalExpenses: number;
+  averageExpense: number;
+};
+
 const AllExpenses = ({
   groupExpenses,
   currencyFormat,
   setSelectGroup,
   totalExpenses,
   averageExpense,
-}) => {
+}: AllExpensesProps) => {
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const { getUsersByCreatorId, usersByCreatorId } = useGroups();
   const { user } = useAuth();
@@ -42,12 +50,12 @@ const AllExpenses = ({
             {groupExpenses &&
               groupExpenses.map((expense: any) => (
                 <tr key={expense.id_expense}>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="inline-flex items-center gap-x-3">
                       <span>{currencyFormat(expense.amount)}</span>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-2">
                       {isMobile ? (
                         " "
@@ -70,13 +78,13 @@ const AllExpenses = ({
                       </div>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="text-xs md:text-sm inline-flex items-center gap-x-3">
                       <span>{expense.description}</span>
                     </div>
                   </Td>
 
-                  <Td>
+                  <Td onclick={() => {}}>
                     <span className="text-xs md:text-sm">
                       {new Date(expense.date).toLocaleTimeString("es-AR", {
                         hour: "2-digit",
@@ -86,11 +94,11 @@ const AllExpenses = ({
                       {new Date(expense.date).toLocaleDateString("es-AR")}
                     </span>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-6">
                       {usersByCreatorId &&
                       usersByCreatorId.find(
-                        (u) => u.id_user === expense.user_id
+                        (u: any) => u.id_user === expense.user_id
                       ) ? (
                         <ModalDelete
                           expense={expense}

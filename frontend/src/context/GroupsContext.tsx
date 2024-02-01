@@ -7,22 +7,39 @@ import {
 } from "../services/groups";
 import { getHistoryExpensesRequest } from "../services/expenses";
 
-export const GroupsContext = createContext({
-  loading: true,
-  setLoading: () => {},
+interface GroupsContextValue {
+  getGroups: (e: string) => void;
+  groupsUser: object | null;
+  getGroupExpenses: (e: string) => void;
+  groupExpenses: object | null;
+  groupUser: string;
+  totalExpenses: number;
+  averageExpense: number;
+  userDetails: any;
+  message: any;
+  postCheckUserInGroup: (e: string, f: string) => void;
+  userWithPermission: boolean;
+  getUsersByCreatorId: (e: string) => void;
+  usersByCreatorId: any;
+  createdGroups: any;
+  getHistoryExpenses: (e: string) => void;
+  historyExpenses: any;
+}
+
+export const GroupsContext = createContext<GroupsContextValue>({
   getGroups: () => {},
-  groupsUser: {},
+  groupsUser: null,
   getGroupExpenses: () => {},
-  groupExpenses: {},
-  groupName: "",
+  groupExpenses: null,
+  groupUser: "",
   totalExpenses: 0,
   averageExpense: 0,
-  userDetails: {},
+  userDetails: null,
   message: [],
   postCheckUserInGroup: () => {},
   userWithPermission: false,
   getUsersByCreatorId: () => {},
-  usersByCreatorId: {},
+  usersByCreatorId: null,
   createdGroups: [],
   getHistoryExpenses: () => {},
   historyExpenses: [],
@@ -36,7 +53,11 @@ export const useGroups = () => {
   return context;
 };
 
-export const GroupsProvider = ({ children }: any) => {
+interface GroupsProviderProps {
+  children: React.ReactNode;
+}
+
+export const GroupsProvider = ({ children }: GroupsProviderProps) => {
   const [groupsUser, setGroupsUser] = useState<object | null>(null);
   const [groupExpenses, setGroupExpenses] = useState<object | null>(null);
   const [totalExpenses, setTotalExpenses] = useState<number>(0);
@@ -54,7 +75,7 @@ export const GroupsProvider = ({ children }: any) => {
     if (!res.error) {
       setGroupsUser(res.groups);
       const userCreatedGroups = res.groups.filter(
-        (group) => group.creator_user_id === userId
+        (group: any) => group.creator_user_id === userId
       );
       setCreatedGroups(userCreatedGroups);
     }

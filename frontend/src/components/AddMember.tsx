@@ -15,7 +15,12 @@ import {
 } from "../services/groups";
 import { useMediaQuery } from "react-responsive";
 
-const AddMember = ({ groupId, setSelectGroup }) => {
+type AddMemberProps = {
+  groupId: string;
+  setSelectGroup: Function;
+};
+
+const AddMember = ({ groupId, setSelectGroup }: AddMemberProps) => {
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const [userType, setUserType] = useState("newUser");
   const [isRegistered, setIsRegistered] = useState(false);
@@ -113,7 +118,7 @@ const AddMember = ({ groupId, setSelectGroup }) => {
           </Thead>
           <Tbody>
             <tr className="grid md:table">
-              <Td>
+              <Td onclick={() => {}}>
                 <div className="pb-2">
                   <select
                     onChange={(e) => setUserType(e.target.value)}
@@ -132,7 +137,7 @@ const AddMember = ({ groupId, setSelectGroup }) => {
                   </select>
                 </div>
               </Td>
-              <Td>
+              <Td onclick={() => {}}>
                 {userType == "newUser" ? (
                   <div>
                     <div className="flex justify-between pb-2">
@@ -168,7 +173,7 @@ const AddMember = ({ groupId, setSelectGroup }) => {
                 )}
               </Td>
               {userType == "newUser" ? (
-                <Td>
+                <Td onclick={() => {}}>
                   <div className="pb-2">
                     {isRegistered ? (
                       <input
@@ -193,11 +198,11 @@ const AddMember = ({ groupId, setSelectGroup }) => {
                   </div>
                 </Td>
               ) : (
-                <Td> </Td>
+                <Td onclick={() => {}}> </Td>
               )}
-              <Td> </Td>
+              <Td onclick={() => {}}> </Td>
 
-              <Td>
+              <Td onclick={() => {}}>
                 <button className="flex items-center justify-center md:w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
                   <svg
                     className="w-5 h-5"

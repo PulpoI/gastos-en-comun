@@ -9,7 +9,12 @@ import { useAuth } from "../context/AuthContext";
 import { useMediaQuery } from "react-responsive";
 import { GiWireframeGlobe, GiPadlock } from "react-icons/gi";
 
-const AllGroups = ({ groupsUser, setSelectGroup }) => {
+type AllGroupsProps = {
+  groupsUser: any;
+  setSelectGroup: Function;
+};
+
+const AllGroups = ({ groupsUser, setSelectGroup }: AllGroupsProps) => {
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const navigate = useNavigate();
 
@@ -83,7 +88,7 @@ const AllGroups = ({ groupsUser, setSelectGroup }) => {
                       <ModalDelete
                         group={group}
                         setSelectGroup={setSelectGroup}
-                        groupsUser={groupsUser}
+                        userGroup={groupsUser}
                       />
                     </div>
                   </Td>
