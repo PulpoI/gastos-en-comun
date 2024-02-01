@@ -2,32 +2,30 @@ import Td from "./ui/table/Td";
 import Th from "./ui/table/Th";
 import { useMediaQuery } from "react-responsive";
 
+type TotalExpensesTableProps = {
+  currencyFormat: any;
+  totalExpenses: number;
+  averageExpense: number;
+};
+
 const TotalExpensesTable = ({
   currencyFormat,
   totalExpenses,
   averageExpense,
-}) => {
+}: TotalExpensesTableProps) => {
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   return (
     <>
       <thead className="bg-gray-50 dark:bg-gray-800">
         <tr>
-          <Th
-            className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-            scope="col"
-          >
+          <Th>
             <div className="flex items-center gap-x-3">
               <button className="flex items-center gap-x-2">
                 <span>Gasto total</span>
               </button>
             </div>
           </Th>
-          <Th
-            className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-            scope="col"
-          >
-            {totalExpenses != averageExpense ? "División de gastos" : ""}
-          </Th>
+          <Th>{totalExpenses != averageExpense ? "División de gastos" : ""}</Th>
           {isMobile ? (
             " "
           ) : (
@@ -48,7 +46,7 @@ const TotalExpensesTable = ({
           <td className="px-4 py-4 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
             <div className="inline-flex items-center gap-x-3">
               <span>
-                {totalExpenses != "0" ? currencyFormat(totalExpenses) : "-"}
+                {totalExpenses != 0 ? currencyFormat(totalExpenses) : "-"}
               </span>
             </div>
           </td>
@@ -56,7 +54,7 @@ const TotalExpensesTable = ({
             <div className="inline-flex items-center gap-x-3">
               <span>
                 {totalExpenses != averageExpense
-                  ? averageExpense != "0"
+                  ? averageExpense != 0
                     ? currencyFormat(averageExpense)
                     : "-"
                   : ""}
@@ -67,10 +65,10 @@ const TotalExpensesTable = ({
             " "
           ) : (
             <>
-              <Td> </Td>
-              <Td> </Td>
-              <Td> </Td>
-              <Td> </Td>
+              <Td onclick={() => {}}> </Td>
+              <Td onclick={() => {}}> </Td>
+              <Td onclick={() => {}}> </Td>
+              <Td onclick={() => {}}> </Td>
             </>
           )}
         </tr>

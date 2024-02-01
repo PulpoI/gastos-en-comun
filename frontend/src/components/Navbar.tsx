@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import iconUser from "../assets/img/avatar.gif";
@@ -10,7 +10,7 @@ const Navbar = () => {
   const { isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
-  const navRef = useRef();
+  const navRef = React.useRef<HTMLDivElement | null>(null);
 
   const { logout, checkLogin } = useAuth();
 
@@ -22,8 +22,9 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleOutsideClick = (event) => {
+  const handleOutsideClick = (event: any) => {
     if (
+      navRef.current &&
       !navRef.current.contains(event.target) &&
       event.target.id !== "btn-icon"
     ) {

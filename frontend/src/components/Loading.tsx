@@ -1,4 +1,8 @@
-const Loading = ({ type }) => {
+type LoadingProps = {
+  type: string;
+};
+
+const Loading = ({ type }: LoadingProps) => {
   if (type == "group" || type == "groups")
     return (
       <>

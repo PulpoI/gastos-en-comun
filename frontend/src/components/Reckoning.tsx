@@ -1,4 +1,3 @@
-import React from "react";
 import TotalExpensesTable from "./TotalExpensesTable";
 import Table from "./ui/table/Table";
 import Thead from "./ui/table/Thead";
@@ -6,14 +5,22 @@ import Th from "./ui/table/Th";
 import Tbody from "./ui/table/Tbody";
 import Td from "./ui/table/Td";
 
+type ReckoningProps = {
+  message: any;
+  currencyFormat: any;
+  totalExpenses: number;
+  averageExpense: number;
+  setSelectGroup: any;
+};
+
 const Reckoning = ({
   message,
   currencyFormat,
   totalExpenses,
   averageExpense,
   setSelectGroup,
-}) => {
-  function roundOut(num) {
+}: ReckoningProps) => {
+  function roundOut(num: number) {
     return Math.round(num / 100) * 100;
   }
 
@@ -34,12 +41,12 @@ const Reckoning = ({
               {message &&
                 message.map((msg: any, index: number) => (
                   <tr key={index}>
-                    <Td>
+                    <Td onclick={() => {}}>
                       <div className="inline-flex items-center gap-x-3">
                         <span>{index + 1}</span>
                       </div>
                     </Td>
-                    <Td>
+                    <Td onclick={() => {}}>
                       <div className="inline-flex items-center gap-x-3">
                         <span>
                           <span className="text-blue-500">{msg.debtor}</span>{" "}
@@ -52,10 +59,13 @@ const Reckoning = ({
                         </span>
                       </div>
                     </Td>
-                    <Td> </Td>
-                    <Td> {currencyFormat(roundOut(msg.amount))} </Td>
-                    <Td> </Td>
-                    <Td> </Td>
+                    <Td onclick={() => {}}> </Td>
+                    <Td onclick={() => {}}>
+                      {" "}
+                      {currencyFormat(roundOut(msg.amount))}{" "}
+                    </Td>
+                    <Td onclick={() => {}}> </Td>
+                    <Td onclick={() => {}}> </Td>
                   </tr>
                 ))}
             </Tbody>

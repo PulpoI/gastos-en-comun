@@ -16,7 +16,7 @@ const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
   const [loading, setLoading] = useState<boolean>(true);
 
-  const { groupId } = useParams();
+  const { groupId } = useParams() as any;
   const { user } = useAuth();
 
   const {
@@ -37,7 +37,7 @@ const GroupPage = () => {
     }, 300);
   }, [groupId, user]);
 
-  const currencyFormat = (value) =>
+  const currencyFormat = (value: number) =>
     new Intl.NumberFormat("es-AR", {
       style: "currency",
       currency: "ARS",
@@ -76,7 +76,6 @@ const GroupPage = () => {
                   <a
                     className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500"
                     role="button"
-                    tabIndex="0"
                   >
                     {groupUser.is_public ? "Publico" : "Privado"}
                   </a>
@@ -258,10 +257,7 @@ const GroupPage = () => {
                 )}
                 {selectGroup == "history" && (
                   <HistoryExpenses
-                    message={message}
                     currencyFormat={currencyFormat}
-                    totalExpenses={totalExpenses}
-                    averageExpense={averageExpense}
                     setSelectGroup={setSelectGroup}
                   />
                 )}

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const CloseExpenses = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { groupId } = useParams();
+  const { groupId } = useParams() as any;
 
   const { getGroupExpenses } = useGroups();
 

@@ -10,8 +10,12 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ModalDelete = ({
-  expense = null,
-  setSelectGroup,
+  expense = {
+    id_expense: "",
+    user_id: "",
+    group_id: "",
+  },
+  setSelectGroup = null,
   group = null,
   userGroup = null,
 }) => {
@@ -36,7 +40,7 @@ const ModalDelete = ({
 
   async function deleteExpense(data: object) {
     const userWithId = usersByCreatorId.find(
-      (u) => u.id_user === expense.user_id
+      (u: any) => u.id_user === expense.user_id
     );
     if (userWithId) {
       data = {

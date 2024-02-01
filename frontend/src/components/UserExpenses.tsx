@@ -10,6 +10,14 @@ import { useAuth } from "../context/AuthContext";
 import Tbody from "./ui/table/Tbody";
 import { useMediaQuery } from "react-responsive";
 
+type UserExpensesProps = {
+  userDetails: any;
+  currencyFormat: any;
+  totalExpenses: number;
+  averageExpense: number;
+  setSelectGroup: any;
+  groupUser: any;
+};
 const UserExpenses = ({
   userDetails,
   currencyFormat,
@@ -17,7 +25,7 @@ const UserExpenses = ({
   averageExpense,
   setSelectGroup,
   groupUser,
-}) => {
+}: UserExpensesProps) => {
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const { user } = useAuth();
   return (
@@ -38,7 +46,7 @@ const UserExpenses = ({
             {userDetails &&
               userDetails.map((u: any) => (
                 <tr key={u.userId}>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
                         {u.totalExpense != "0"
@@ -47,7 +55,7 @@ const UserExpenses = ({
                       </span>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-2">
                       {isMobile ? (
                         " "
@@ -73,7 +81,7 @@ const UserExpenses = ({
                       </div>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
                         {u.amountOwed != "0"
@@ -83,12 +91,12 @@ const UserExpenses = ({
                     </div>
                   </Td>
 
-                  <Td>
+                  <Td onclick={() => {}}>
                     {u.amountToReceive != "0"
                       ? currencyFormat(u.amountToReceive)
                       : "-"}
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-6">
                       {groupUser && groupUser.creator_user_id == user ? (
                         <ModalDelete

@@ -7,13 +7,23 @@ import {
 } from "../services/auth";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { set } from "react-hook-form";
 
-export const AuthContext = createContext({
+interface AuthContextValue {
+  signup: (user: { email: string }) => void;
+  login: (user: { email: string; password: string }) => void;
+  logout: () => void;
+  errors: any;
+  isAuthenticated: boolean;
+  user: any;
+  checkLogin: () => void;
+  loading: boolean;
+}
+
+export const AuthContext = createContext<AuthContextValue>({
   signup: () => {},
   login: () => {},
   logout: () => {},
-  errors: {},
+  errors: [],
   isAuthenticated: false,
   user: "",
   checkLogin: () => {},
@@ -28,8 +38,12 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState<object | null>(null);
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState<boolean>(true);
@@ -73,7 +87,7 @@ export const AuthProvider = ({ children }: any) => {
         } else {
           setErrors(res.error);
         }
-      } catch (error) {
+      } catch (error: any) {
         setErrors(error.message || "Error inesperado");
       } finally {
       }
@@ -94,10 +108,6 @@ export const AuthProvider = ({ children }: any) => {
       setErrors(res.error);
     }
   };
-
-  // useEffect(() => {
-  //   checkLogin();
-  // }, []);
 
   const contextValue = {
     signup,

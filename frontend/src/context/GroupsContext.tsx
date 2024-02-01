@@ -9,10 +9,10 @@ import { getHistoryExpensesRequest } from "../services/expenses";
 
 interface GroupsContextValue {
   getGroups: (e: string) => void;
-  groupsUser: object | null;
+  groupsUser: any;
   getGroupExpenses: (e: string) => void;
-  groupExpenses: object | null;
-  groupUser: string;
+  groupExpenses: any;
+  groupUser: any;
   totalExpenses: number;
   averageExpense: number;
   userDetails: any;
@@ -30,8 +30,8 @@ export const GroupsContext = createContext<GroupsContextValue>({
   getGroups: () => {},
   groupsUser: null,
   getGroupExpenses: () => {},
-  groupExpenses: null,
-  groupUser: "",
+  groupExpenses: [],
+  groupUser: [],
   totalExpenses: 0,
   averageExpense: 0,
   userDetails: null,
@@ -39,7 +39,7 @@ export const GroupsContext = createContext<GroupsContextValue>({
   postCheckUserInGroup: () => {},
   userWithPermission: false,
   getUsersByCreatorId: () => {},
-  usersByCreatorId: null,
+  usersByCreatorId: [],
   createdGroups: [],
   getHistoryExpenses: () => {},
   historyExpenses: [],

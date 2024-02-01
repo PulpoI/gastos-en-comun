@@ -7,10 +7,18 @@ import { useGroups } from "../context/GroupsContext";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
+type HistoryExpensesProps = {
+  currencyFormat: any;
+  setSelectGroup: any;
+};
+
+const HistoryExpenses = ({
+  currencyFormat,
+  setSelectGroup,
+}: HistoryExpensesProps) => {
   const { getHistoryExpenses, historyExpenses } = useGroups();
 
-  const { groupId } = useParams();
+  const { groupId } = useParams<{ groupId?: string }>() as any;
 
   useEffect(() => {
     getHistoryExpenses(groupId);
@@ -32,7 +40,7 @@ const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
             {historyExpenses &&
               historyExpenses.map((history: any) => (
                 <tr key={history.id_group_history}>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-2">
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
@@ -46,14 +54,14 @@ const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
                       </div>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="inline-flex items-center gap-x-3">
                       <span>
                         {currencyFormat(history.json_data.totalExpenses)}
                       </span>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-6">
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
@@ -62,7 +70,7 @@ const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
                       </div>
                     </div>
                   </Td>
-                  <Td>
+                  <Td onclick={() => {}}>
                     <div className="flex items-center gap-x-6">
                       <div>
                         <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
@@ -72,8 +80,8 @@ const HistoryExpenses = ({ currencyFormat, setSelectGroup }) => {
                     </div>
                   </Td>
 
-                  <Td> </Td>
-                  <Td> </Td>
+                  <Td onclick={() => {}}> </Td>
+                  <Td onclick={() => {}}> </Td>
                 </tr>
               ))}
           </Tbody>
