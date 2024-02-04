@@ -276,7 +276,9 @@ const GroupPage = () => {
               </div>
             </div>
           </div>
-          {groupExpenses && groupExpenses.length > 0 && <CloseExpenses />}
+          {groupExpenses && groupExpenses.length > 0 && (
+            <CloseExpenses setSelectGroup={setSelectGroup} />
+          )}
         </section>
       )}
     </>

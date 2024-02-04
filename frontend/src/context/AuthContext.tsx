@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import {
   loginRequest,
   logoutRequest,
@@ -16,7 +16,6 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   user: any;
   checkLogin: () => void;
-  loading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -27,7 +26,6 @@ export const AuthContext = createContext<AuthContextValue>({
   isAuthenticated: false,
   user: "",
   checkLogin: () => {},
-  loading: true,
 });
 
 export const useAuth = () => {
@@ -46,7 +44,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState<boolean>(true);
 
   function setCookie(name: string, value: string, expires: number) {
     Cookies.set(name, value, { expires: expires });
@@ -117,7 +114,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     errors,
     user,
     isAuthenticated,
-    loading,
   };
 
   return (

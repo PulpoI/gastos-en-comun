@@ -18,13 +18,7 @@ const TotalExpensesTable = ({
     <>
       <thead className="bg-gray-50 dark:bg-gray-800">
         <tr>
-          <Th>
-            <div className="flex items-center gap-x-3">
-              <button className="flex items-center gap-x-2">
-                <span>Gasto total</span>
-              </button>
-            </div>
-          </Th>
+          <Th>Gasto total</Th>
           <Th>{totalExpenses != averageExpense ? "División de gastos" : ""}</Th>
           {isMobile ? (
             " "

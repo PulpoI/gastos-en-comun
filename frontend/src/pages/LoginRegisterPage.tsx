@@ -20,7 +20,7 @@ const LoginRegisterPage = ({ type }: LoginRegisterPageProps) => {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const { signup, login, isAuthenticated, errors: registerErrors } = useAuth();
+  const { signup, login, isAuthenticated } = useAuth();
 
   const navigate = useNavigate();
 

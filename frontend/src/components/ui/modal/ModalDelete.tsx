@@ -10,21 +10,17 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const ModalDelete = ({
-  expense = {
-    id_expense: "",
-    user_id: "",
-    group_id: "",
-  },
-  setSelectGroup = null,
-  group = null,
-  userGroup = null,
+  expense = null as any,
+  setSelectGroup = null as any,
+  group = null as any,
+  userGroup = null as any,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { getGroupExpenses, getGroups, getUsersByCreatorId, usersByCreatorId } =
     useGroups();
   const { user } = useAuth();
-  const { groupId } = useParams();
+  const { groupId } = useParams() as any;
 
   const openModal = () => {
     setIsOpen(true);

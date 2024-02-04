@@ -25,11 +25,7 @@ const AddMember = ({ groupId, setSelectGroup }: AddMemberProps) => {
   const [userType, setUserType] = useState("newUser");
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const { user } = useAuth();
   const { getUsersByCreatorId, usersByCreatorId, getGroupExpenses } =

@@ -4,12 +4,11 @@ import { postGenerateHistoryExpensesRequest } from "../../../services/expenses";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-const CloseExpenses = ({}) => {
+const CloseExpenses = ({ setSelectGroup = null as any }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { groupId } = useParams() as any;
-
-  const { getGroupExpenses } = useGroups();
+  const { getGroupExpenses, getHistoryExpenses } = useGroups();
 
   const openModal = () => {
     setIsOpen(true);
@@ -26,6 +25,8 @@ const CloseExpenses = ({}) => {
     if (!res.error) {
       toast.success(res.message);
       getGroupExpenses(groupId);
+      getHistoryExpenses(groupId);
+      setSelectGroup("history");
       closeModal();
     } else {
       toast.error(res.error);
