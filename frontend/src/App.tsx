@@ -9,6 +9,7 @@ import GroupsExpenses from "./pages/GroupsExpenses";
 import ProtectedRoute from "./ProtectedRoute";
 import { GroupsProvider } from "./context/GroupsContext";
 import GroupPage from "./pages/GroupPage";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                   <Route path="/grupos" element={<GroupsExpenses />} />
                 </Route>
               </Routes>
+              <Footer />
             </main>
           </GroupsProvider>
         </BrowserRouter>

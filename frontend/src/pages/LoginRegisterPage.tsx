@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
+import logo2 from "../assets/img/logo-2.png";
 
 type Inputs = {
   name: string;
@@ -37,14 +38,10 @@ const LoginRegisterPage = ({ type }: LoginRegisterPageProps) => {
   return (
     <>
       <section className="bg-white dark:bg-gray-900">
-        <div className="container flex items-start justify-center min-h-screen px-6 mx-auto pt-24">
+        <div className="container flex items-start justify-center px-6 mx-auto py-10 sm:py-20">
           <form className="w-full max-w-md" onSubmit={onSubmit}>
             <div className="flex justify-center mx-auto">
-              <img
-                className="w-auto h-7 sm:h-8"
-                src="https://merakiui.com/images/logo.svg"
-                alt=""
-              />
+              <img className="w-auto h-7 sm:h-8" src={logo2} alt="" />
             </div>
             {type === "registro" ? (
               <div className="flex items-center justify-center mt-6">

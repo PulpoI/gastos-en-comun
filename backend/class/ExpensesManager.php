@@ -215,6 +215,8 @@ class ExpensesManager
       }
 
 
+
+
       return [
         'users' => $groupUsers,
         'group' => $group,

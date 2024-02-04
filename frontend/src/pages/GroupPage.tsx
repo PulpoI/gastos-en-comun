@@ -11,6 +11,7 @@ import AddExpense from "../components/AddExpense";
 import AddMember from "../components/AddMember";
 import CloseExpenses from "../components/ui/modal/CloseExpenses";
 import HistoryExpenses from "../components/HistoryExpenses";
+import { GiWireframeGlobe, GiPadlock } from "react-icons/gi";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
@@ -44,15 +45,24 @@ const GroupPage = () => {
     }).format(value);
 
   function copyGroupShareLink() {
-    navigator.clipboard.writeText(`http://localhost:3000/groups/${groupId}`);
-    toast.success("Link copiado al portapapeles");
+    console.log(groupUser.password);
+
+    if (groupUser.is_public != 0) {
+      navigator.clipboard.writeText(`http://localhost:3000/groups/${groupId}`);
+      toast.success("Link copiado al portapapeles");
+    } else {
+      toast.error("No se puede compartir un grupo privado");
+    }
   }
 
   if (loading) return <Loading type={"group"} />;
 
   return (
     <>
-      {!userWithPermission && !groupUser.is_public ? (
+      {userWithPermission &&
+      groupUser.is_public &&
+      userWithPermission != true &&
+      groupUser.is_public != 1 ? (
         <div>
           <h2>No tienes permisos para ver este grupo</h2>
         </div>
@@ -62,9 +72,9 @@ const GroupPage = () => {
             <div className="sm:flex sm:items-center sm:justify-between">
               <div>
                 <div className="flex items-center gap-x-3">
-                  <h2 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                  <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
                     {groupUser.name}
-                  </h2>
+                  </h1>
                   {userDetails && userDetails.length && (
                     <button onClick={() => setSelectGroup("userExpenses")}>
                       <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
@@ -77,7 +87,11 @@ const GroupPage = () => {
                     className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500"
                     role="button"
                   >
-                    {groupUser.is_public ? "Publico" : "Privado"}
+                    {groupUser.is_public == "1" ? (
+                      <GiWireframeGlobe />
+                    ) : (
+                      <GiPadlock />
+                    )}
                   </a>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-300 h-11">
@@ -277,7 +291,11 @@ const GroupPage = () => {
             </div>
           </div>
           {groupExpenses && groupExpenses.length > 0 && (
-            <CloseExpenses setSelectGroup={setSelectGroup} />
+            <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+              <div className="relative flex items-center sm:mt-4 md:mt-0">
+                <CloseExpenses setSelectGroup={setSelectGroup} />
+              </div>
+            </div>
           )}
         </section>
       )}

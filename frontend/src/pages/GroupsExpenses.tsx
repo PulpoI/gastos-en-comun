@@ -25,14 +25,14 @@ const GroupsExpenses = () => {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-x-3">
-              <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+              <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
                 Grupos de gastos
-              </h2>
+              </h1>
 
               <button onClick={() => setSelectGroup("userExpenses")}>
                 <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-                  {groupsUser.length}{" "}
-                  {groupsUser.length > 1 ? "grupos" : "grupo"}
+                  {groupsUser && groupsUser.length}{" "}
+                  {groupsUser && groupsUser.length > 1 ? "grupos" : "grupo"}
                 </span>
               </button>
             </div>

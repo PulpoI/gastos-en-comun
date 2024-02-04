@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import iconUser from "../assets/img/avatar.gif";
 import { useAuth } from "../context/AuthContext";
+import logo from "../assets/img/logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,17 +47,13 @@ const Navbar = () => {
       className="relative bg-white shadow dark:bg-gray-800"
       data-x-show={`{ isOpen: ${isOpen} }`}
     >
-      <div className="container py-4 md:flex md:justify-between md:items-center">
+      <div className="container py-2 md:flex md:justify-between md:items-center">
         <div className="flex items-center justify-between">
-          <a href="#">
-            <img
-              className="w-auto h-6 sm:h-7"
-              src="https://merakiui.com/images/full-logo.svg"
-              alt=""
-            />
-          </a>
+          <Link to={"/"}>
+            <img className="w-auto h-10 sm:h-14" src={logo} alt="" />
+          </Link>
 
-          <div className="flex lg:hidden">
+          <div className="flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
@@ -104,26 +101,23 @@ const Navbar = () => {
           }`}
         >
           <div className="flex flex-col items-center md:flex-row">
-            <Link
-              to={"/"}
-              className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
-            >
-              Calcular gastos
-            </Link>
             {isAuthenticated && (
-              <Link
-                to={"/grupos"}
-                className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
-              >
-                Gastos
-              </Link>
+              <>
+                <Link
+                  onClick={() => setIsOpen(false)}
+                  to={"/grupos"}
+                  className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+                >
+                  Grupos de gastos
+                </Link>
+              </>
             )}
-            <a
+            {/* <a
               className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
               href="#"
             >
               Contacto
-            </a>
+            </a> */}
 
             {!isAuthenticated ? (
               <Link

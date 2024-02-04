@@ -40,6 +40,8 @@ h1 {
 
 #root {
   width: 100%;
+  min-height: 100vh;
+  background-color: rgb(17 24 39);
   /* height: 100vh;
   overflow: hidden; */
 }
@@ -82,7 +84,9 @@ table tbody {
   flex: 1 1 auto;
   display: block;
   overflow-y: scroll;
-  max-height: 516px;
+  /* max-height: 516px; */
+  max-height: 53vh;
+
   @media screen and (max-width: 640px) {
     max-height: 511px;
   }

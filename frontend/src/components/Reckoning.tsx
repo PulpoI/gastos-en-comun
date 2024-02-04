@@ -32,8 +32,8 @@ const Reckoning = ({
             <Thead>
               <Th>Orden</Th>
               <Th>Detalle</Th>
-              <Th> </Th>
               <Th>Redondeo</Th>
+              <Th> </Th>
               <Th> </Th>
               <Th> </Th>
             </Thead>
@@ -59,11 +59,11 @@ const Reckoning = ({
                         </span>
                       </div>
                     </Td>
-                    <Td onclick={() => {}}> </Td>
                     <Td onclick={() => {}}>
                       {" "}
                       {currencyFormat(roundOut(msg.amount))}{" "}
                     </Td>
+                    <Td onclick={() => {}}> </Td>
                     <Td onclick={() => {}}> </Td>
                     <Td onclick={() => {}}> </Td>
                   </tr>

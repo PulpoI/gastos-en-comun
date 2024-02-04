@@ -53,7 +53,11 @@ const AllGroups = ({ groupsUser, setSelectGroup }: AllGroupsProps) => {
                       className="inline-flex items-center gap-x-3"
                     >
                       <span className="px-3 py-1 text-2xl font-bold text-gray-100 transition-colors duration-300 transform  rounded cursor-pointer hover:bg-gray-500">
-                        {group.is_public ? <GiWireframeGlobe /> : <GiPadlock />}
+                        {group.is_public == "1" ? (
+                          <GiWireframeGlobe />
+                        ) : (
+                          <GiPadlock />
+                        )}
                       </span>
                     </div>
                   </Td>
