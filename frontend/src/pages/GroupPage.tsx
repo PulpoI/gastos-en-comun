@@ -12,6 +12,7 @@ import AddMember from "../components/AddMember";
 import CloseExpenses from "../components/ui/modal/CloseExpenses";
 import HistoryExpenses from "../components/HistoryExpenses";
 import { GiWireframeGlobe, GiPadlock } from "react-icons/gi";
+import Error404 from "../components/Error404";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
@@ -45,8 +46,6 @@ const GroupPage = () => {
     }).format(value);
 
   function copyGroupShareLink() {
-    console.log(groupUser.password);
-
     if (groupUser.is_public != 0) {
       navigator.clipboard.writeText(`http://localhost:3000/groups/${groupId}`);
       toast.success("Link copiado al portapapeles");
@@ -56,18 +55,15 @@ const GroupPage = () => {
   }
 
   if (loading) return <Loading type={"group"} />;
+  console.log("userWithPermission", userWithPermission);
+  console.log("is public", groupUser.is_public);
 
   return (
     <>
-      {userWithPermission &&
-      groupUser.is_public &&
-      userWithPermission != true &&
-      groupUser.is_public != 1 ? (
-        <div>
-          <h2>No tienes permisos para ver este grupo</h2>
-        </div>
+      {userWithPermission != true && groupUser.is_public != 1 ? (
+        <Error404 />
       ) : (
-        <section className="container px-4 mx-auto md:mt-10 mt-2">
+        <section className="container min-h-[80vh] px-4 mx-auto md:mt-10 mt-2">
           <div>
             <div className="sm:flex sm:items-center sm:justify-between">
               <div>

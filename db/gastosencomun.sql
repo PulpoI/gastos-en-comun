@@ -51,5 +51,7 @@ CREATE TABLE GroupsHistory (
     action_description VARCHAR(255) NOT NULL,
     json_data JSON NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
+    user_id_generated VARCHAR(13),
+    FOREIGN KEY (group_id) REFERENCES Groups(id_group),
+    FOREIGN KEY (user_id_generated) REFERENCES Users(id_user)
 );

@@ -241,7 +241,7 @@ class ExpensesManager
     return $stmt->fetchColumn();
   }
 
-  private function getUserNameCreatorById($userId)
+  private function getUserNameCreatorById($creatorUserId)
   {
     $stmt = $this->conn->prepare("SELECT name FROM Users WHERE id_user = :creator_user_id");
     $stmt->bindParam(':creator_user_id', $creatorUserId);
@@ -301,32 +301,47 @@ class ExpensesManager
   }
 
   // Post history of expenses
-  public function generateHistoryExpenses($groupId)
+  public function generateHistoryExpenses($groupId, $userIdGenerated)
   {
     $sumaryExpenses = $this->getGroupExpensesSummary($groupId);
     $message = $this->generateDebtOperations($sumaryExpenses['userDetails']);
     $sumaryExpenses['message'] = $message;
 
-    if ($sumaryExpenses['status'] == 200) {
-      $stmt = $this->conn->prepare("INSERT INTO GroupsHistory (id_group_history, group_id, action_description, json_data, date) VALUES (:idHistory, :groupId, :actionDescription, :jsonData, NOW())");
-      $uniqueId = uniqid();
-      $stmt->bindParam(':idHistory', $uniqueId);
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->bindParam(':actionDescription', $sumaryExpenses['groupName']);
-      $jsonData = json_encode($sumaryExpenses);
-      $stmt->bindParam(':jsonData', $jsonData);
-      $stmt->execute();
+    // check if user is in the group
+    $isUserInGroup = false;
+    $groupUsers = $sumaryExpenses['users'];
+    foreach ($groupUsers as $user) {
+      if ($user['id_user'] == $userIdGenerated) {
+        $isUserInGroup = true;
+        break;
+      }
+    }
+    if ($isUserInGroup) {
+      if ($sumaryExpenses['status'] == 200) {
+        $stmt = $this->conn->prepare("INSERT INTO GroupsHistory (id_group_history, group_id, action_description, json_data, user_id_generated, date ) VALUES (:idHistory, :groupId, :actionDescription, :jsonData, :userIdGenerated, NOW())");
+        $uniqueId = uniqid();
+        $stmt->bindParam(':idHistory', $uniqueId);
+        $stmt->bindParam(':groupId', $groupId);
+        $stmt->bindParam(':actionDescription', $sumaryExpenses['groupName']);
+        $jsonData = json_encode($sumaryExpenses);
+        $stmt->bindParam(':jsonData', $jsonData);
+        $stmt->bindParam(':userIdGenerated', $userIdGenerated);
+        $stmt->execute();
 
-      //then delete all expenses from group 
-      $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE group_id = :groupId");
-      $stmt->bindParam(':groupId', $groupId);
-      $stmt->execute();
+        //then delete all expenses from group 
+        $stmt = $this->conn->prepare("DELETE FROM CommonExpenses WHERE group_id = :groupId");
+        $stmt->bindParam(':groupId', $groupId);
+        $stmt->execute();
 
-      http_response_code(201); // Created
-      return ['message' => 'Historial de gastos generado exitosamente', 'status' => 201];
+        http_response_code(201); // Created
+        return ['message' => 'Historial de gastos generado exitosamente', 'status' => 201];
+      } else {
+        http_response_code(500); // Internal Server Error
+        return ['error' => 'No se pudo generar el historial de gastos', 'status' => 500];
+      }
     } else {
-      http_response_code(500); // Internal Server Error
-      return ['error' => 'No se pudo generar el historial de gastos', 'status' => 500];
+      http_response_code(403); // Forbidden
+      return ['error' => 'El usuario no tiene permiso para generar el historial de gastos del grupo', 'status' => 403];
     }
 
   }
@@ -344,6 +359,8 @@ class ExpensesManager
       foreach ($historyExpenses as &$expense) {
         $jsonData = $expense['json_data'];
         $expense['json_data'] = json_decode($jsonData, true);
+        $userId = $expense['user_id_generated'];
+        $expense['user_name_generated'] = $this->getUserNameById($userId);
       }
 
       http_response_code(200); // OK

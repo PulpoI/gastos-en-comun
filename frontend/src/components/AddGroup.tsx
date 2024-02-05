@@ -30,6 +30,9 @@ const AddGroup = () => {
 
   const onSubmit = handleSubmit(async (values) => {
     values.userId = user;
+    if (!values.password) {
+      values.password = "";
+    }
     const res = await postGroupRequest(values);
 
     if (!res.error) {
@@ -51,7 +54,8 @@ const AddGroup = () => {
               <>
                 <Th>Nombre del grupo</Th>
                 <Th>Tipo</Th>
-                <Th>Contraseña (opcional)</Th>
+                {/* <Th>Contraseña (opcional)</Th> */}
+                <Th> </Th>
                 <Th> </Th>
                 <Th> </Th>
               </>
@@ -111,7 +115,7 @@ const AddGroup = () => {
                   </div>
                 </div>
               </Td>
-              <Td onclick={() => {}}>
+              {/* <Td onclick={() => {}}>
                 <div className="pb-2">
                   <input
                     {...register("password", { required: false })}
@@ -120,7 +124,8 @@ const AddGroup = () => {
                     placeholder="Contraseña (opcional)"
                   ></input>
                 </div>
-              </Td>
+              </Td> */}
+              <Td onclick={() => {}}> </Td>
               <Td onclick={() => {}}> </Td>
               <Td onclick={() => {}}>
                 <button className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">

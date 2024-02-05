@@ -20,7 +20,7 @@ const GroupsExpenses = () => {
   }, []);
   if (loading) return <Loading type={"groups"} />;
   return (
-    <section className="container px-4 mx-auto mt-2 md:mt-10">
+    <section className="container min-h-[80vh] px-4 mx-auto mt-2 md:mt-10">
       <div>
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>

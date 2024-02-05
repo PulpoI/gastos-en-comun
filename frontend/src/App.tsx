@@ -10,6 +10,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import { GroupsProvider } from "./context/GroupsContext";
 import GroupPage from "./pages/GroupPage";
 import Footer from "./components/Footer";
+import Error404 from "./components/Error404";
+import FAQ from "./pages/FAQ";
 
 function App() {
   return (
@@ -17,7 +19,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <GroupsProvider>
-            <main>
+            <main className="min-h-screen md:min-h-0">
               <Navbar />
               <Notifications />
               <Routes>
@@ -31,10 +33,13 @@ function App() {
                   element={<LoginRegisterPage type="login" />}
                 />
 
+                <Route path="/faq" element={<FAQ />} />
                 <Route path="/grupo/:groupId" element={<GroupPage />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/grupos" element={<GroupsExpenses />} />
                 </Route>
+
+                <Route path="*" element={<Error404 />} />
               </Routes>
               <Footer />
             </main>

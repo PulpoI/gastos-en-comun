@@ -3,11 +3,13 @@ import { useGroups } from "../../../context/GroupsContext";
 import { postGenerateHistoryExpensesRequest } from "../../../services/expenses";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../context/AuthContext";
 
 const CloseExpenses = ({ setSelectGroup = null as any }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { groupId } = useParams() as any;
+  const { user } = useAuth();
   const { getGroupExpenses, getHistoryExpenses } = useGroups();
 
   const openModal = () => {
@@ -20,8 +22,8 @@ const CloseExpenses = ({ setSelectGroup = null as any }) => {
 
   useEffect(() => {}, []);
 
-  async function generateHistoryExepnses(groupId: string) {
-    const res = await postGenerateHistoryExpensesRequest(groupId);
+  async function generateHistoryExepnses(groupId: string, user: string) {
+    const res = await postGenerateHistoryExpensesRequest(groupId, user);
     if (!res.error) {
       toast.success(res.message);
       getGroupExpenses(groupId);
@@ -101,7 +103,7 @@ const CloseExpenses = ({ setSelectGroup = null as any }) => {
 
                   <button
                     onClick={() => {
-                      generateHistoryExepnses(groupId);
+                      generateHistoryExepnses(groupId, user);
                     }}
                     className="w-full px-4 py-2 mt-2 text-sm font-medium tracking-wide text-white transition-colors duration-300 transform bg-blue-600 rounded-md sm:w-auto sm:mt-0 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40"
                   >

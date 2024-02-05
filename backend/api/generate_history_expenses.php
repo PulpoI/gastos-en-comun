@@ -16,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && $data !== null) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = json_decode(file_get_contents('php://input'), true);
   $groupId = $data['groupId'];
+  $userIdGenerated = $data['userIdGenerated'];
 
   $expensesManager = new ExpensesManager();
-  $response = $expensesManager->generateHistoryExpenses($groupId);
+  $response = $expensesManager->generateHistoryExpenses($groupId, $userIdGenerated);
   echo json_encode($response);
 } else {
   echo json_encode(['error' => 'Invalid request method']);

@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       login(res.user);
     } else {
       setErrors(res.error);
+      toast.error(res.error);
     }
   };
 

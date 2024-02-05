@@ -28,11 +28,11 @@ export const deleteExpenseRequest = async (expense: object) => {
   }
 }
 
-export const postGenerateHistoryExpensesRequest = async (groupId: string) => {
+export const postGenerateHistoryExpensesRequest = async (groupId: string, userIdGenerated: string) => {
   try {
     const response =  await fetch(API + "generate_history_expenses", {
       method: "POST",
-      body: JSON.stringify({groupId: groupId}),
+      body: JSON.stringify({groupId: groupId, userIdGenerated: userIdGenerated}),
     })
     const data = response.json();
     return data;

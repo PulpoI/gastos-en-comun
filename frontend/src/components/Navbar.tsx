@@ -16,19 +16,15 @@ const Navbar = () => {
   const { logout, checkLogin } = useAuth();
 
   useEffect(() => {
-    checkLogin();
     document.addEventListener("click", handleOutsideClick);
+    checkLogin();
     return () => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
 
   const handleOutsideClick = (event: any) => {
-    if (
-      navRef.current &&
-      !navRef.current.contains(event.target) &&
-      event.target.id !== "btn-icon"
-    ) {
+    if (navRef.current && event.target.id !== "btn-icon") {
       setIsOpen(false);
       setIsOpenIcon(false);
     }
@@ -44,7 +40,7 @@ const Navbar = () => {
   return (
     <nav
       ref={navRef}
-      className="relative bg-white shadow dark:bg-gray-800"
+      className="relative bg-white shadow dark:bg-slate-900"
       data-x-show={`{ isOpen: ${isOpen} }`}
     >
       <div className="container py-2 md:flex md:justify-between md:items-center">
@@ -96,7 +92,7 @@ const Navbar = () => {
         </div>
 
         <div
-          className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ${
+          className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ${
             isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"
           }`}
         >
@@ -110,6 +106,14 @@ const Navbar = () => {
                 >
                   Grupos de gastos
                 </Link>
+
+                <Link
+                  onClick={() => setIsOpen(false)}
+                  to={"/faq"}
+                  className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+                >
+                  FAQ
+                </Link>
               </>
             )}
             {/* <a
@@ -120,20 +124,31 @@ const Navbar = () => {
             </a> */}
 
             {!isAuthenticated ? (
-              <Link
-                to={"/login"}
-                className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
-              >
-                Iniciar sesión
-              </Link>
+              <>
+                <Link
+                  to={"/faq"}
+                  className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+                >
+                  FAQ
+                </Link>
+                <Link
+                  to={"/login"}
+                  className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+                >
+                  Iniciar sesión
+                </Link>
+              </>
             ) : (
               <>
                 <div className="relative inline-block">
                   {/* Dropdown toggle button */}
                   <button
                     id="btn-icon"
-                    onClick={() => setIsOpenIcon(!isOpenIcon)}
-                    className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white focus:border-blue-500 focus:ring-opacity-40 dark:focus:ring-opacity-40 focus:ring-blue-300 dark:focus:ring-blue-400 focus:ring dark:bg-gray-800 focus:outline-none"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsOpenIcon(!isOpenIcon);
+                    }}
+                    className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white  dark:bg-slate-900"
                   >
                     <div className="flex items-center gap-x-6 md:mx-4 md:my-0">
                       <a>
@@ -152,7 +167,7 @@ const Navbar = () => {
                       onClick={() => setIsOpen(false)}
                       className="absolute right-0 z-20 w-48 py-2 mt-2 origin-top-right bg-white rounded-md shadow-xl dark:bg-gray-800"
                     >
-                      <a
+                      {/* <a
                         href="#"
                         className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                       >
@@ -189,7 +204,7 @@ const Navbar = () => {
                         className="block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
                       >
                         Ayuda
-                      </a>
+                      </a> */}
                       <a
                         onClick={logoutSession}
                         className="cursor-pointer block px-4 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"

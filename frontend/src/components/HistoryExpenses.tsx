@@ -33,7 +33,7 @@ const HistoryExpenses = ({
             <Th>Gasto total</Th>
             <Th>Gasto por miembro</Th>
             <Th>Cantidad de miembros</Th>
-            <Th> </Th>
+            <Th>Cerrado por</Th>
             <Th> </Th>
           </Thead>
           <Tbody>
@@ -80,7 +80,15 @@ const HistoryExpenses = ({
                     </div>
                   </Td>
 
-                  <Td onclick={() => {}}> </Td>
+                  <Td onclick={() => {}}>
+                    <div className="flex items-center gap-x-6">
+                      <div>
+                        <h2 className="text-sm font-medium text-gray-800 dark:text-white ">
+                          {history.user_name_generated}
+                        </h2>
+                      </div>
+                    </div>
+                  </Td>
                   <Td onclick={() => {}}> </Td>
                 </tr>
               ))}
