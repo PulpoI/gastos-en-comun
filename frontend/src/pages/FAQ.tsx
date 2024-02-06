@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaCirclePlus, FaCircleMinus } from "react-icons/fa6";
+import { IconContext } from "react-icons";
 
 interface Faq {
   question: string;
@@ -51,8 +53,8 @@ const FAQ: React.FC = () => {
   ];
 
   return (
-    <section className="bg-white dark:bg-gray-900">
-      <div className="container max-w-4xl px-6 py-10 mx-auto">
+    <section className="bg-white dark:bg-gray-900 my-10">
+      <div className="container max-w-4xl pb-0 md:pb-20 px-6 mx-auto">
         <h1 className="text-2xl font-semibold text-center text-gray-800 lg:text-3xl dark:text-white">
           Preguntas frecuentes
         </h1>
@@ -72,24 +74,19 @@ const FAQ: React.FC = () => {
                   {faq.question}
                 </h2>
                 <span
-                  className={`text-white bg-blue-500 rounded-full ${
+                  className={`text-white dark:bg-gray-900 rounded-full${
                     index === activeIndex && "transform rotate-180"
                   }`}
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    />
-                  </svg>
+                  {index === activeIndex ? (
+                    <IconContext.Provider value={{ size: "20px" }}>
+                      <FaCircleMinus />
+                    </IconContext.Provider>
+                  ) : (
+                    <IconContext.Provider value={{ size: "20px" }}>
+                      <FaCirclePlus />
+                    </IconContext.Provider>
+                  )}
                 </span>
               </button>
               {index === activeIndex && (

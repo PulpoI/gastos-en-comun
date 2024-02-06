@@ -101,8 +101,8 @@ const GroupsExpenses = () => {
       </div>
 
       <div className="flex flex-col">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full py-2 align-middle">
             {selectGroup == "addGroup" && <AddGroup />}
             {selectGroup == "allGroups" && (
               <AllGroups

@@ -4,12 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import iconUser from "../assets/img/avatar.gif";
 import { useAuth } from "../context/AuthContext";
 import logo from "../assets/img/logo.png";
+import { useMediaQuery } from "react-responsive";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenIcon, setIsOpenIcon] = useState(false);
   const { isAuthenticated } = useAuth();
 
+  const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
   const navigate = useNavigate();
   const navRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -24,9 +26,20 @@ const Navbar = () => {
   }, []);
 
   const handleOutsideClick = (event: any) => {
-    if (navRef.current && event.target.id !== "btn-icon") {
-      setIsOpen(false);
-      setIsOpenIcon(false);
+    if (isMobile) {
+      if (
+        navRef.current &&
+        !navRef.current.contains(event.target) &&
+        event.target.id !== "btn-icon"
+      ) {
+        setIsOpen(false);
+        setIsOpenIcon(false);
+      }
+    } else {
+      if (navRef.current && event.target.id !== "btn-icon") {
+        setIsOpen(false);
+        setIsOpenIcon(false);
+      }
     }
   };
 
@@ -40,7 +53,7 @@ const Navbar = () => {
   return (
     <nav
       ref={navRef}
-      className="relative bg-white shadow dark:bg-slate-900"
+      className=" bg-white shadow dark:bg-slate-900 sticky top-0"
       data-x-show={`{ isOpen: ${isOpen} }`}
     >
       <div className="container py-2 md:flex md:justify-between md:items-center">
