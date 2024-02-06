@@ -37,7 +37,7 @@ const LoginRegisterPage = ({ type }: LoginRegisterPageProps) => {
 
   return (
     <>
-      <section className="bg-white dark:bg-gray-900">
+      <section className="bg-white dark:bg-gray-900 min-h-[78vh]">
         <div className="container flex items-start justify-center px-6 mx-auto py-10 sm:py-20">
           <form className="w-full max-w-md" onSubmit={onSubmit}>
             <div className="flex justify-center mx-auto">

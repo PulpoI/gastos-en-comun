@@ -36,7 +36,7 @@ const Navbar = () => {
         setIsOpenIcon(false);
       }
     } else {
-      if (navRef.current && event.target.id !== "btn-icon") {
+      if (navRef.current) {
         setIsOpen(false);
         setIsOpenIcon(false);
       }
@@ -58,7 +58,13 @@ const Navbar = () => {
     >
       <div className="container py-2 md:flex md:justify-between md:items-center">
         <div className="flex items-center justify-between">
-          <Link to={"/"}>
+          <Link
+            onClick={() => {
+              setIsOpen(false);
+              setIsOpenIcon(false);
+            }}
+            to={"/"}
+          >
             <img className="w-auto h-10 sm:h-14" src={logo} alt="" />
           </Link>
 
@@ -113,7 +119,10 @@ const Navbar = () => {
             {isAuthenticated && (
               <>
                 <Link
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsOpenIcon(false);
+                  }}
                   to={"/grupos"}
                   className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
                 >
@@ -121,7 +130,10 @@ const Navbar = () => {
                 </Link>
 
                 <Link
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsOpenIcon(false);
+                  }}
                   to={"/faq"}
                   className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
                 >
@@ -139,12 +151,20 @@ const Navbar = () => {
             {!isAuthenticated ? (
               <>
                 <Link
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsOpenIcon(false);
+                  }}
                   to={"/faq"}
                   className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
                 >
                   FAQ
                 </Link>
                 <Link
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsOpenIcon(false);
+                  }}
                   to={"/login"}
                   className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
                 >

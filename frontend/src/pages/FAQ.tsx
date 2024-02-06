@@ -67,10 +67,10 @@ const FAQ: React.FC = () => {
               }`}
             >
               <button
-                className="flex items-center justify-between w-full p-8"
+                className="flex items-center justify-between w-full p-8 gap-2"
                 onClick={() => handleToggle(index)}
               >
-                <h2 className="font-semibold text-gray-700 dark:text-white">
+                <h2 className="font-semibold text-gray-700 dark:text-white text-start">
                   {faq.question}
                 </h2>
                 <span

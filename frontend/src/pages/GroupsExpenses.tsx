@@ -20,7 +20,7 @@ const GroupsExpenses = () => {
   }, []);
   if (loading) return <Loading type={"groups"} />;
   return (
-    <section className="container min-h-[80vh] px-4 mx-auto mt-2 md:mt-10">
+    <section className="container min-h-[75vh] lg:min-h-[75vh] px-4 mx-auto md:mt-4 mt-2 mb-8 md:mb-24">
       <div>
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
@@ -36,7 +36,7 @@ const GroupsExpenses = () => {
                 </span>
               </button>
             </div>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">
               {selectGroup == "allGroups" &&
                 "Todos los grupos en lo que participas."}
               {selectGroup == "myGroups" && "Todos los grupos que creaste."}
@@ -48,7 +48,7 @@ const GroupsExpenses = () => {
             </p>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-between">
+        <div className="mt-1 md:mt-3 flex items-center justify-between">
           <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
             <button
               onClick={() => setSelectGroup("allGroups")}
@@ -102,7 +102,7 @@ const GroupsExpenses = () => {
 
       <div className="flex flex-col">
         <div className="overflow-x-auto">
-          <div className="inline-block min-w-full py-2 align-middle">
+          <div className="inline-block min-w-full align-middle">
             {selectGroup == "addGroup" && <AddGroup />}
             {selectGroup == "allGroups" && (
               <AllGroups

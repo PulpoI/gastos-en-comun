@@ -14,6 +14,7 @@ import HistoryExpenses from "../components/HistoryExpenses";
 import { GiWireframeGlobe, GiPadlock, GiShare } from "react-icons/gi";
 import Error404 from "../components/Error404";
 import { useMediaQuery } from "react-responsive";
+import { IconContext } from "react-icons";
 
 const GroupPage = () => {
   const [selectGroup, setSelectGroup] = useState("allExpenses");
@@ -64,9 +65,9 @@ const GroupPage = () => {
       {userWithPermission != true && groupUser.is_public != 1 ? (
         <Error404 />
       ) : (
-        <section className="container min-h-[80vh] px-4 mx-auto md:mt-10 mt-2">
+        <section className="container min-h-[75vh] lg:min-h-[75vh] px-4 mx-auto md:mt-4 mt-2 mb-8 md:mb-24">
           <div>
-            <div className="sm:flex sm:items-center sm:justify-between">
+            <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-x-3">
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-800 dark:text-white">
@@ -91,7 +92,7 @@ const GroupPage = () => {
                     )}
                   </a>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-300">
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-300">
                   {selectGroup == "allExpenses" &&
                     "Todos los gastos de los miembros del grupo."}
                   {selectGroup == "userExpenses" &&
@@ -105,17 +106,19 @@ const GroupPage = () => {
                   {selectGroup == "history" && "Historial de gastos del grupo"}
                 </p>
               </div>
-              <div className="items-center mt-4 gap-x-3  md:flex">
+              <div className="items-center gap-x-3  md:flex">
                 <button
                   onClick={copyGroupShareLink}
-                  className="flex items-center justify-center w-1/2 md:px-5 py-1 md:py-2 text-xs md:text-sm text-gray-700 transition-colors duration-200 bg-white border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
+                  className="flex items-center justify-center md:px-5 py-1 md:py-2 text-xs md:text-sm text-gray-700 transition-colors duration-200 bg-white md:border rounded-lg gap-x-2 sm:w-auto dark:hover:bg-gray-800 dark:bg-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:border-gray-700"
                 >
-                  <GiShare />
+                  <IconContext.Provider value={{ size: "20px" }}>
+                    <GiShare />
+                  </IconContext.Provider>
                   {isMobile ? "" : <span>Compartir grupo</span>}
                 </button>
               </div>
             </div>
-            <div className="md:mt-6 flex md:items-center justify-between flex-col-reverse md:flex-row">
+            <div className="mt-1 md:mt-3 flex md:items-center justify-between flex-col-reverse md:flex-row">
               <div className="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
                 <button
                   onClick={() => setSelectGroup("allExpenses")}
@@ -214,7 +217,7 @@ const GroupPage = () => {
 
           <div className="flex flex-col">
             <div className="overflow-x-auto">
-              <div className="inline-block min-w-full py-2 align-middle">
+              <div className="inline-block min-w-full align-middle">
                 {selectGroup == "allExpenses" && (
                   <AllExpenses
                     groupExpenses={groupExpenses}

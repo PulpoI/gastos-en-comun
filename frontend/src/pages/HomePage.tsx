@@ -3,7 +3,7 @@ import imgHero from "../assets/img/finance-app.svg";
 const HomePage = () => {
   return (
     <>
-      <section className="bg-white dark:bg-gray-900 py-10 sm:py-20">
+      <section className="bg-white dark:bg-gray-900 py-10 sm:py-20 min-h-[78vh]">
         <div className="lg:flex container">
           <div className="flex items-center justify-start w-full py-8 lg:h-[32rem] lg:w-1/2">
             <div className="max-w-xl">
@@ -35,7 +35,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className="w-full h-64 lg:w-1/2 lg:h-auto">
-            <img src={imgHero} alt="" />
+            <img src={imgHero} alt="" className="max-w-[600px]" />
           </div>
         </div>
       </section>
