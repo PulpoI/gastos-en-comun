@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import Notifications from "./components/Notifications";
 import GroupsExpenses from "./pages/GroupsExpenses";
-import ProtectedRoute from "./ProtectedRoute";
 import { GroupsProvider } from "./context/GroupsContext";
 import GroupPage from "./pages/GroupPage";
 import Footer from "./components/Footer";
@@ -19,7 +18,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <GroupsProvider>
-            <main className="min-h-screen md:min-h-0">
+            <main className="min-h-screen bg-white shadow dark:bg-gray-900">
               <Navbar />
               <Notifications />
               <Routes>
@@ -35,10 +34,7 @@ function App() {
 
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/grupo/:groupId" element={<GroupPage />} />
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/grupos" element={<GroupsExpenses />} />
-                </Route>
-
+                <Route path="/grupos" element={<GroupsExpenses />} />
                 <Route path="*" element={<Error404 />} />
               </Routes>
               <Footer />

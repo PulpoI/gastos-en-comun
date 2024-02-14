@@ -76,7 +76,7 @@ const GroupsExpenses = () => {
               onClick={() => setSelectGroup("addGroup")}
               className={`flex items-center px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm ${
                 selectGroup == "addGroup"
-                  ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300"
+                  ? "bg-gray-100  dark:bg-gray-800 dark:text-gray-300 "
                   : "dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
               } `}
             >

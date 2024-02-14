@@ -21,13 +21,13 @@ const HomePage = () => {
               <div className="flex flex-col mt-6 space-y-3 lg:space-y-0 lg:flex-row">
                 <Link
                   to={"/registro"}
-                  className="block px-5 py-2 text-sm font-medium tracking-wider text-center text-white transition-colors duration-300 transform bg-gray-900 rounded-md hover:bg-gray-700"
+                  className="block px-5 py-2 text-sm font-medium tracking-wider text-center text-white hover:text-blue-500 dark:hover:text-blue-400  transition-colors duration-300 transform bg-gray-900 rounded-md hover:bg-gray-700"
                 >
                   Registrate
                 </Link>
                 <Link
                   to={"/login"}
-                  className="block px-5 py-2 text-sm font-medium tracking-wider text-center text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md lg:mx-4 hover:bg-gray-300"
+                  className="block px-5 py-2 text-sm font-medium tracking-wider text-center text-gray-700 hover:text-blue-500 dark:hover:text-blue-400  transition-colors duration-300 transform bg-gray-200 rounded-md lg:mx-4 hover:bg-gray-300 dark:hover:bg-gray-700"
                 >
                   Calcular Gastos
                 </Link>

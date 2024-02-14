@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { MdOutlineLightMode, MdOutlineDarkMode } from "react-icons/md";
 
 import iconUser from "../assets/img/avatar.gif";
 import { useAuth } from "../context/AuthContext";
@@ -9,6 +10,7 @@ import { useMediaQuery } from "react-responsive";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenIcon, setIsOpenIcon] = useState(false);
+  const [theme, setTheme] = useState("dark");
   const { isAuthenticated } = useAuth();
 
   const isMobile = useMediaQuery({ query: "(max-width: 720px)" });
@@ -24,6 +26,14 @@ const Navbar = () => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.querySelector("html")?.classList.add("dark");
+    } else {
+      document.querySelector("html")?.classList.remove("dark");
+    }
+  }, [theme]);
 
   const handleOutsideClick = (event: any) => {
     if (isMobile) {
@@ -47,7 +57,11 @@ const Navbar = () => {
     logout();
     setIsOpenIcon(false);
     setIsOpen(false);
-    navigate("/login");
+    navigate("/");
+  }
+
+  function handleChangeTheme() {
+    setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
   }
 
   return (
@@ -111,8 +125,10 @@ const Navbar = () => {
         </div>
 
         <div
-          className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ${
-            isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"
+          className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ${
+            isOpen
+              ? "translate-x-0 opacity-100 bg-white shadow dark:bg-slate-900"
+              : "opacity-0 -translate-x-full"
           }`}
         >
           <div className="flex flex-col items-center md:flex-row">
@@ -249,6 +265,16 @@ const Navbar = () => {
                 </div>
               </>
             )}
+            <button
+              onClick={handleChangeTheme}
+              className="text-gray-700 transition-colors duration-300 transform dark:text-gray-200"
+            >
+              {theme === "dark" ? (
+                <MdOutlineLightMode />
+              ) : (
+                <MdOutlineDarkMode />
+              )}
+            </button>
           </div>
         </div>
       </div>

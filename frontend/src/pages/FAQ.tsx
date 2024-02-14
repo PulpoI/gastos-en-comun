@@ -46,6 +46,11 @@ const FAQ: React.FC = () => {
         "El Mensaje de Deudas es una característica que proporciona una descripción detallada de las deudas y los montos a recibir. Te guía sobre quién debe pagar a quién y cuánto. Puedes acceder a esta información para una comprensión clara de las transacciones necesarias.",
     },
     {
+      question: "¿Puedo compartir el grupo a otras personas?",
+      answer:
+        "Sí creas un grupo Público, puedes compartir el grupo para que otras personas puedan visualizar el grupo si no están registradas. Sin embargo, para registrar gastos, los usuarios deben estar registrados en la aplicación y unidos al grupo.",
+    },
+    {
       question: "¿Es segura la información financiera en la aplicación?",
       answer:
         "La seguridad de tus datos es una prioridad. Gastos compartidos utiliza medidas de seguridad robustas para proteger la información financiera y garantizar la privacidad de los usuarios.",
@@ -74,7 +79,7 @@ const FAQ: React.FC = () => {
                   {faq.question}
                 </h2>
                 <span
-                  className={`text-white dark:bg-gray-900 rounded-full${
+                  className={`text-gray-700 dark:text-white dark:bg-gray-900 rounded-full${
                     index === activeIndex && "transform rotate-180"
                   }`}
                 >

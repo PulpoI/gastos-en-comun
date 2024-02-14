@@ -51,7 +51,7 @@ const GroupPage = () => {
 
   function copyGroupShareLink() {
     if (groupUser.is_public != 0) {
-      navigator.clipboard.writeText(`http://localhost:3000/groups/${groupId}`);
+      navigator.clipboard.writeText(window.location.href);
       toast.success("Link copiado al portapapeles");
     } else {
       toast.error("No se puede compartir un grupo privado");
@@ -82,7 +82,7 @@ const GroupPage = () => {
                     </button>
                   )}
                   <a
-                    className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 rounded cursor-pointer"
+                    className="px-3 py-1 text-sm font-bold text-gray-900 dark:text-gray-100 transition-colors duration-300 rounded cursor-pointer"
                     role="button"
                   >
                     {groupUser.is_public == "1" ? (
@@ -98,12 +98,12 @@ const GroupPage = () => {
                   {selectGroup == "userExpenses" &&
                     "Todos los miembros que pertenecen al grupo."}
                   {selectGroup == "reckoning" &&
-                    "Ajuste de cuentas entre los miembros del grupo."}
+                    "Ajuste de cuentas entre los miembros."}
                   {selectGroup == "addExpense" &&
                     "Agrega un nuevo gasto al grupo."}
                   {selectGroup == "addMember" &&
                     "Agrega un nuevo miembro al grupo."}
-                  {selectGroup == "history" && "Historial de gastos del grupo"}
+                  {selectGroup == "history" && "Historial de gastos del grupo."}
                 </p>
               </div>
               <div className="items-center gap-x-3  md:flex">
