@@ -1,3 +1,3 @@
 export const API =
-  "https://gastoscompartidos.pulpol.com.ar/backend/index.php?route=";
+  "https://my-projects-gastos-compartidos-backend.zzgltp.easypanel.host/index.php?route=";
 
