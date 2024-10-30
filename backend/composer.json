@@ -1,0 +1,11 @@
+{
+    "name": "pulpoi/gastos-compartidos",
+    "description": "Gastos compartidos",
+    "require": {
+      "php": ">=7.4"
+    },
+    "scripts": {
+      "start": "php -S localhost:8000 -t public"
+    }
+  }
+  

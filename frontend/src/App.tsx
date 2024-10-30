@@ -20,6 +20,7 @@ function App() {
           <GroupsProvider>
             <main className="min-h-screen bg-white shadow dark:bg-gray-900">
               <Navbar />
+
               <Notifications />
               <Routes>
                 <Route path="/" element={<HomePage />} />
