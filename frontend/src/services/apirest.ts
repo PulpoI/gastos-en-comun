@@ -1,3 +1,2 @@
-export const API =
-  "https://my-projects-gastos-compartidos-backend.zzgltp.easypanel.host/index.php?route=";
+export const API = import.meta.env.VITE_API_URL + "index.php?route=";
 
