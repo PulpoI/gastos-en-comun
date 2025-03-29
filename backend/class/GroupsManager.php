@@ -17,7 +17,7 @@ class GroupsManager
     try {
       $hashedPassword = password_hash($groupPassword, PASSWORD_DEFAULT);
       // Insert new group
-      $stmt = $this->conn->prepare("INSERT INTO Groups (id_group, name, password, is_public, creator_user_id) VALUES (:idGroup, :name, :password, :isPublic, :userId)");
+      $stmt = $this->conn->prepare("INSERT INTO ExpenseGroups (id_group, name, password, is_public, creator_user_id) VALUES (:idGroup, :name, :password, :isPublic, :userId)");
       $uniqueIdGroup = uniqid();
       $stmt->bindParam(':idGroup', $uniqueIdGroup);
       $stmt->bindParam(':name', $groupName);
@@ -140,7 +140,7 @@ class GroupsManager
   {
     try {
       // Get the stored password for the group
-      $stmt = $this->conn->prepare("SELECT password FROM Groups WHERE id_group = :groupId");
+      $stmt = $this->conn->prepare("SELECT password FROM ExpenseGroups WHERE id_group = :groupId");
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
@@ -168,9 +168,9 @@ class GroupsManager
   {
     try {
       $stmt = $this->conn->prepare("
-      SELECT Groups.id_group, Groups.creator_user_id, Groups.name, Groups.date, Groups.is_public, Groups.password
-      FROM Groups
-      INNER JOIN UserGroups ON Groups.id_group = UserGroups.group_id
+      SELECT ExpenseGroups.id_group, ExpenseGroups.creator_user_id, ExpenseGroups.name, ExpenseGroups.date, ExpenseGroups.is_public, ExpenseGroups.password
+      FROM ExpenseGroups
+      INNER JOIN UserGroups ON ExpenseGroups.id_group = UserGroups.group_id
       WHERE UserGroups.user_id = :userId
       ");
       $stmt->bindParam(':userId', $userId);
@@ -211,7 +211,7 @@ class GroupsManager
   public function getGroup($groupId)
   {
     try {
-      $stmt = $this->conn->prepare("SELECT * FROM Groups WHERE id_group = :groupId");
+      $stmt = $this->conn->prepare("SELECT * FROM ExpenseGroups WHERE id_group = :groupId");
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
@@ -241,8 +241,6 @@ class GroupsManager
       $users = $this->getGroupUsers($groupId)['users'];
 
       return ['users' => $users, 'status' => 200];
-
-
     } catch (PDOException $e) {
       return ['error' => 'Failed to calculate user balances', 'status' => 500];
     }
@@ -295,8 +293,8 @@ class GroupsManager
         ];
       }
 
-      // Verify that the user is the administrator of the group in the table Groups 
-      $stmt = $this->conn->prepare("SELECT creator_user_id FROM Groups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
+      // Verify that the user is the administrator of the group in the table ExpenseGroups 
+      $stmt = $this->conn->prepare("SELECT creator_user_id FROM ExpenseGroups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
       $stmt->bindParam(':creatorUserId', $creatorUserId);
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
@@ -318,7 +316,7 @@ class GroupsManager
       $stmt->execute();
 
       // Delete group from UserGroups
-      $stmt = $this->conn->prepare("DELETE FROM Groups WHERE id_group = :groupId");
+      $stmt = $this->conn->prepare("DELETE FROM ExpenseGroups WHERE id_group = :groupId");
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
 
@@ -346,8 +344,8 @@ class GroupsManager
         ];
       }
 
-      // Verify that the user is the administrator of the group in the table Groups 
-      $stmt = $this->conn->prepare("SELECT creator_user_id FROM Groups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
+      // Verify that the user is the administrator of the group in the table ExpenseGroups 
+      $stmt = $this->conn->prepare("SELECT creator_user_id FROM ExpenseGroups WHERE creator_user_id = :creatorUserId AND id_group = :groupId");
       $stmt->bindParam(':creatorUserId', $creatorUserId);
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();

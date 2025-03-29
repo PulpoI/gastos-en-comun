@@ -5,9 +5,9 @@ require_once 'config/config.php';
 class Database
 {
   private $host = "localhost";
-  private $username = "root";
-  private $password = "";
-  private $dbname = "gastosencomun";
+  private $username = "c2790080_gastosc";
+  private $password = "tuGUbupe57";
+  private $dbname = "c2790080_gastosc";
 
   public function getConnection()
   {
@@ -16,6 +16,3 @@ class Database
     return $conn;
   }
 }
-
-
-?>

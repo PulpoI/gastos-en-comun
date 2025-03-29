@@ -15,7 +15,7 @@ CREATE TABLE SessionTokens (
     FOREIGN KEY (user_id) REFERENCES Users(id_user)
 );
 
-CREATE TABLE Groups (
+CREATE TABLE ExpenseGroups (
     id_group VARCHAR(13) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,7 +30,7 @@ CREATE TABLE UserGroups (
     user_id VARCHAR(13),
     group_id VARCHAR(13),
     FOREIGN KEY (user_id) REFERENCES Users(id_user),
-    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
+    FOREIGN KEY (group_id) REFERENCES ExpenseGroups(id_group)
 );
 
 CREATE TABLE CommonExpenses (
@@ -42,7 +42,7 @@ CREATE TABLE CommonExpenses (
     user_id VARCHAR(13),
     group_id VARCHAR(13),
     FOREIGN KEY (user_id) REFERENCES Users(id_user),
-    FOREIGN KEY (group_id) REFERENCES Groups(id_group)
+    FOREIGN KEY (group_id) REFERENCES ExpenseGroups(id_group)
 );
 
 CREATE TABLE GroupsHistory (
@@ -52,6 +52,6 @@ CREATE TABLE GroupsHistory (
     json_data JSON NOT NULL,
     date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id_generated VARCHAR(13),
-    FOREIGN KEY (group_id) REFERENCES Groups(id_group),
+    FOREIGN KEY (group_id) REFERENCES ExpenseGroups(id_group),
     FOREIGN KEY (user_id_generated) REFERENCES Users(id_user)
 );

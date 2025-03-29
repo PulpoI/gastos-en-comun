@@ -134,7 +134,7 @@ class ExpensesManager
       $groupUsers = $getGroupUsers->getGroupUsers($groupId);
 
       // get name of group
-      $stmt = $this->conn->prepare("SELECT name FROM Groups WHERE id_group = :groupId");
+      $stmt = $this->conn->prepare("SELECT name FROM ExpenseGroups WHERE id_group = :groupId");
       $stmt->bindParam(':groupId', $groupId);
       $stmt->execute();
       $groupName = $stmt->fetchColumn();
@@ -343,7 +343,6 @@ class ExpensesManager
       http_response_code(403); // Forbidden
       return ['error' => 'El usuario no tiene permiso para generar el historial de gastos del grupo', 'status' => 403];
     }
-
   }
 
   // Get history of expenses
@@ -370,8 +369,4 @@ class ExpensesManager
       return ['error' => 'No se pudo recuperar el historial de gastos del grupo', 'status' => 500];
     }
   }
-
 }
-
-
-?>
